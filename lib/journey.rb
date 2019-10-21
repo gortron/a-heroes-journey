@@ -24,19 +24,20 @@ class Journey < ActiveRecord::Base
     puts "Encountering #{challenge.name}"
     if turn_choice == "Fight"
       puts "You attack for #{hero.power} damage."
-      challenge.update(health: challenge.health - hero.power)
-      puts "#{challenge.name} now has #{challenge.health} health."
-      if challenge.health <= 0
+      challenge.update(current_health: challenge.current_health - hero.power)
+      puts "#{challenge.name} now has #{challenge.current_health} health."
+      if challenge.current_health <= 0
         puts "#{challenge.name} defeated!"
         hero.update(experience: hero.experience + challenge.experience)
+        challenge.update(current_health: challenge.max_health)
         end_encounter(app)
       end
       puts "#{challenge.name} strikes back for #{challenge.power} damage."
-      hero.update(health: hero.health - challenge.power)
-      if hero.health <= 0
+      hero.update(current_health: hero.current_health - challenge.power)
+      if hero.current_health <= 0
         app.game_over
       end
-      puts "#{hero.name} now has #{hero.health} health."
+      puts "#{hero.name} now has #{hero.current_health} health."
     else
       puts "You flee!"
       app.current_game

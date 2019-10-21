@@ -34,12 +34,15 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     name = gets.chomp
     puts "Name is #{name}"
     Hero.new({name: name})
+    if Challenge.all.length == 0
+      Challenge.seed_challenges
+    end
     current_game
   end
 
   def current_game
     puts "Current Game Triggered"
-    puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.health} health."
+    puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.current_health} health."
     puts "What will you do now?"
     puts "Journey\n
     Back to Main Menu"
@@ -54,7 +57,12 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
 
   def enter_journey
     puts "Enter Journey triggered"
-    Journey.new_encounter(self)
+    if Hero.last.current_health >= 0
+      Journey.new_encounter(self)
+    else
+      puts "Hero has perished! You must start a new game." 
+      main_menu
+    end
   end
 
   def journey_turn(journey)
@@ -67,7 +75,12 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
 
   def load_game
     puts "Load Game triggered"
-    current_game
+    if Hero.last.current_health >= 0
+      current_game
+    else
+      puts "Hero has perished! You must start a new game." 
+      main_menu
+    end
   end
 
   def save_game
@@ -81,8 +94,9 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     exit
   end
 
-  def self.game_over
+  def game_over
     puts "Game Over! #{Hero.all.last.name} has perished."
+    main_menu
   end
 
   def leader_board

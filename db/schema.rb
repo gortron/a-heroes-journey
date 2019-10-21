@@ -16,7 +16,8 @@ ActiveRecord::Schema.define(version: 3) do
     t.string "name"
     t.integer "experience"
     t.string "story"
-    t.integer "health"
+    t.integer "max_health"
+    t.integer "current_health"
     t.integer "power"
   end
 
@@ -24,7 +25,8 @@ ActiveRecord::Schema.define(version: 3) do
     t.string "name"
     t.integer "experience"
     t.string "story"
-    t.integer "health"
+    t.integer "max_health"
+    t.integer "current_health"
     t.integer "power"
   end
 

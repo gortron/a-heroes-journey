@@ -3,7 +3,8 @@ class CreateHeros < ActiveRecord::Migration[5.2]
     t.string :name
     t.integer :experience
     t.string :story
-    t.integer :health
+    t.integer :max_health
+    t.integer :current_health
     t.integer :power
   end
 end

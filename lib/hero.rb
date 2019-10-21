@@ -7,7 +7,8 @@ class Hero < ActiveRecord::Base
   def init
     self.story ||= "A battle hardened veteran."
     self.experience ||= 1
-    self.health ||= 100
+    self.max_health ||= 100
+    self.current_health ||= 100
     self.power ||= 20
     self.save
   end
