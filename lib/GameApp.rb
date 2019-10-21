@@ -27,8 +27,6 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     end
 
   end
-
-  private
   
   def new_game
     # This needs a refactor... this should be defined in class Hero
@@ -46,6 +44,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   end
 
   def current_game
+    puts "Current Game Triggered"
     puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience."
     puts "What will you do now?"
     puts "Journey\n
@@ -64,11 +63,12 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     Journey.new_encounter
   end
 
-  def journey_turn(journey)
+  def self.journey_turn(journey)
     puts "What will you do now?"
     puts "Fight\n
     Flee"
     turn_choice = gets.chomp
+    binding.pry
     journey.encounter(turn_choice)
     # case turn_choice
     # when "Fight"
@@ -95,7 +95,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     exit
   end
 
-  def game_over
+  def self.game_over
     puts "Game Over! #{Hero.all.last.name} has perished."
   end
 

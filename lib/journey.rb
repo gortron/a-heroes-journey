@@ -3,11 +3,12 @@ class Journey < ActiveRecord::Base
   belongs_to :challenges
 
   def self.new_encounter
-    journey = Self.new
+    journey = self.new
     @hero = Hero.last
-    @challenge = Challenge.sample
-    journey.hero_id = hero.id
-    journey.challenge_id = challenge.id
+    @challenge = Challenge.all.sample
+    journey.hero_id = @hero.id
+    journey.challenge_id = @challenge.id
+    journey.save
     puts "#{@challenge.story}"
     GameApp.journey_turn(self)
   end
@@ -22,13 +23,12 @@ class Journey < ActiveRecord::Base
       if turn_choice == "Fight"
         puts "You attack for #{@hero.power} damage."
         @challenge.health -= @hero.power
-        puts "#{@challenge.name} strikes back for #{challenge.power} damage."
+        puts "#{@challenge.name} strikes back for #{@challenge.power} damage."
         @hero.health -= @challenge.power
       else
         puts "You flee!"
         GameApp.current_game
       end
-
       GameApp.journey_turn(self)
     end
   end
