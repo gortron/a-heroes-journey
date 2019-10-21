@@ -3,13 +3,13 @@ class Journey < ActiveRecord::Base
   belongs_to :challenges
   attr_accessor :hero_id, :challenge_id
 
-  def self.new_encounter
+  def self.new_encounter(app)
     journey = self.new
     journey.hero_id = Hero.last.id
     journey.challenge_id = Challenge.all.sample.id
     journey.save
     puts "#{Challenge.find(journey.challenge_id).story}"
-    GameApp.journey_turn(journey)
+    app.journey_turn(journey)
   end
 
   def hero
@@ -20,7 +20,7 @@ class Journey < ActiveRecord::Base
     Challenge.find(@challenge_id)
   end
 
-  def encounter(turn_choice)
+  def encounter(app, turn_choice)
     puts "Encountering #{challenge.name}"
     if turn_choice == "Fight"
       puts "You attack for #{hero.power} damage."
@@ -29,22 +29,22 @@ class Journey < ActiveRecord::Base
       if challenge.health <= 0
         puts "#{challenge.name} defeated!"
         hero.update(experience: hero.experience + challenge.experience)
-        end_encounter
+        end_encounter(app)
       end
       puts "#{challenge.name} strikes back for #{challenge.power} damage."
       hero.update(health: hero.health - challenge.power)
       if hero.health <= 0
-        GameApp.game_over
+        app.game_over
       end
       puts "#{hero.name} now has #{hero.health} health."
     else
       puts "You flee!"
-      GameApp.current_game
+      app.current_game
     end
-    GameApp.journey_turn(self)
+    app.journey_turn(self)
   end
 
-  def end_encounter
-    GameApp.current_game
+  def end_encounter(app)
+    app.current_game
   end
 end

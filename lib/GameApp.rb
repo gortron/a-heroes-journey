@@ -40,35 +40,35 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     hero.health = 100
     hero.power = 20
     hero.save
-    GameApp.current_game
+    current_game
   end
 
-  def self.current_game
+  def current_game
     puts "Current Game Triggered"
-    puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience."
+    puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.health} health."
     puts "What will you do now?"
     puts "Journey\n
     Back to Main Menu"
     game_choice = gets.chomp
     case game_choice
     when "Journey"
-      GameApp.enter_journey
+      enter_journey
     when "Back to Main Menu"
       main_menu
     end
   end
 
-  def self.enter_journey
+  def enter_journey
     puts "Enter Journey triggered"
-    Journey.new_encounter
+    Journey.new_encounter(self)
   end
 
-  def self.journey_turn(journey)
+  def journey_turn(journey)
     puts "What will you do now?"
     puts "Fight\n
     Flee"
     turn_choice = gets.chomp
-    journey.encounter(turn_choice)
+    journey.encounter(self, turn_choice)
     # case turn_choice
     # when "Fight"
     #   puts "You fight!"
@@ -81,7 +81,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
 
   def load_game
     puts "Load Game triggered"
-    GameApp.current_game
+    current_game
   end
 
   def save_game
@@ -105,6 +105,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     Hero.all.order('experience DESC').limit(5).each do |hero|
       puts "Name: #{hero.name}, Experience: #{hero.experience}"
     end
+    main_menu
   end
 
 end
