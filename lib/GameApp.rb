@@ -36,6 +36,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     puts "Name is #{name}"
     #hero = Hero.new
     #hero.name = name
+    #hero.save
     enter_journey
   end
 

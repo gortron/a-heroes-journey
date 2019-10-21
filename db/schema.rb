@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 3) do
     t.integer "power"
   end
 
-  create_table "heroes", force: :cascade do |t|
+  create_table "heros", force: :cascade do |t|
     t.string "name"
     t.integer "experience"
     t.string "story"
