@@ -31,12 +31,17 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   private
   
   def new_game
+    # This needs a refactor... this should be defined in class Hero
     puts "What do they call you, hero?"
     name = gets.chomp
     puts "Name is #{name}"
-    #hero = Hero.new
-    #hero.name = name
-    #hero.save
+    hero = Hero.new
+    hero.name = name
+    hero.story = "A hardened veteran"
+    hero.experience = 1
+    hero.health = 100
+    hero.power = 20
+    hero.save
     enter_journey
   end
 
