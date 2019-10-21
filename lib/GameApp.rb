@@ -87,6 +87,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   def save_game
     # I think the game auto-saves?
     puts "Save Game triggered"
+    main_menu
   end
 
   def exit_game
@@ -101,7 +102,9 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   def leader_board
     # This should return the names of the five heroes with the longest runs (most experience), and their count.
     puts "Leader Board triggered"
-    #Heroes.order(:experience).limit(5)
+    Hero.all.order('experience DESC').limit(5).each do |hero|
+      puts "Name: #{hero.name}, Experience: #{hero.experience}"
+    end
   end
 
 end
