@@ -11,9 +11,9 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     Save Game\n
     Exit Game\n
     Leaderboard"
-    choice = gets.chomp
+    menu_choice = gets.chomp
 
-    case choice
+    case menu_choice
     when "New Game"
       new_game
     when "Load Game"
@@ -42,18 +42,47 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     hero.health = 100
     hero.power = 20
     hero.save
-    enter_journey
+    current_game
+  end
+
+  def current_game
+    puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience."
+    puts "What will you do now?"
+    puts "Journey\n
+    Back to Main Menu"
+    game_choice = gets.chomp
+    case game_choice
+    when "Journey"
+      enter_journey
+    when "Back to Main Menu"
+      main_menu
+    end
   end
 
   def enter_journey
     puts "Enter Journey triggered"
-    #Journey.new(hero.last)
+    Journey.new_encounter
+  end
+
+  def journey_turn(journey)
+    puts "What will you do now?"
+    puts "Fight\n
+    Flee"
+    turn_choice = gets.chomp
+    journey.encounter(turn_choice)
+    # case turn_choice
+    # when "Fight"
+    #   puts "You fight!"
+    #   journey.encounter
+    # when "Flee"
+    #   puts "You flee!"
+    #   current_game
+    # end
   end
 
   def load_game
     puts "Load Game triggered"
-    enter_journey
-
+    current_game
   end
 
   def save_game
@@ -64,6 +93,10 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   def exit_game
     puts "Exit Game triggered"
     exit
+  end
+
+  def game_over
+    puts "Game Over! #{Hero.all.last.name} has perished."
   end
 
   def leader_board
