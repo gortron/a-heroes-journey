@@ -1,19 +1,20 @@
 class GameApp # This class acts as our frontend. Its only job is to ineract with user input/output.
-
+  
   def main_menu
     # Main Menu presents the user with application options. User should be able to start new, load previous, save current, exit app, and see the leaderboard.
 
     puts "Welcome to A Hero's Journeys"
 
-    puts "Main Menu (type your selection in terminal):\n
-    New Game\n
-    Load Game\n
-    Save Game\n
-    Exit Game\n
-    Leaderboard"
-    menu_choice = gets.chomp
+    selection = TTY::Prompt.new.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Save\ Game Exit\ Game Leaderboard),cycle: true)
+    # #puts "Main Menu (type your selection in terminal):\n
+    # "New Game\n
+    # Load Game\n
+    # Save Game\n
+    # Exit Game\n
+    # Leaderboard"
+    # menu_choice = gets.chomp
 
-    case menu_choice
+    case selection
     when "New Game"
       new_game
     when "Load Game"
@@ -24,9 +25,9 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
       exit_game
     when "Leaderboard"
       leader_board
-    else
-      puts "Sorry, that isn't an option."
-      main_menu
+    # else
+    #   puts "Sorry, that isn't an option."
+    #   main_menu
     end
 
   end
@@ -46,18 +47,19 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   def current_game
     puts "Current Game Triggered"
     puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.current_health} health."
-    puts "What will you do now?"
-    puts "Journey\n
-    Back to Main Menu"
-    game_choice = gets.chomp
-    case game_choice
+    selection = TTY::Prompt.new.select("What will you do now?", %w(Journey Back\ to\ Main\ Menu), cycle: true)
+    # puts "What will you do now?"
+    # puts "Journey\n
+    # Back to Main Menu"
+    # game_choice = gets.chomp
+    case selection
     when "Journey"
       enter_journey
     when "Back to Main Menu"
       main_menu
-    else
-      puts "Sorry, that isn't an option."
-      current_game
+    # else
+    #   puts "Sorry, that isn't an option."
+    #   current_game
     end
   end
 
@@ -72,10 +74,11 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   end
 
   def journey_turn
-    puts "What will you do now?"
-    puts "Fight\n
-    Flee"
-    turn_choice = gets.chomp
+    turn_choice = TTY::Prompt.new.select("What will you do now?", %w(Fight Flee), cycle: true)
+    # puts "What will you do now?"
+    # puts "Fight\n
+    # Flee"
+    # turn_choice = gets.chomp
     #binding.pry
     Journey.last.journey_turn_choice(self, turn_choice)
   end

@@ -34,6 +34,7 @@ class Journey < ActiveRecord::Base
       if hero.current_health <= 0
         challenge.reset
         app.game_over 
+      end
     else
       hero_win(app)
     end

@@ -11,3 +11,4 @@ gem "activerecord", '5.2.0'
 gem "sinatra-activerecord", :require => 'active_record'
 
 gem "rake"
+gem "tty-prompt"
