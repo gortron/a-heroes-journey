@@ -1,23 +1,13 @@
 class Journey < ActiveRecord::Base
-  belongs_to :heros
-  belongs_to :challenges
-  attr_accessor :hero_id, :challenge_id
+  belongs_to :hero
+  belongs_to :challenge
 
   def self.new_journey(app)
-    journey = self.new
-    journey.hero_id = Hero.last.id
-    journey.challenge_id = Challenge.all.sample.id
-    journey.save
-    puts "#{Challenge.find(journey.challenge_id).story}"
-    app.journey_turn(journey)
-  end
-
-  def hero
-    Hero.find(@hero_id)
-  end
-
-  def challenge
-    Challenge.find(@challenge_id)
+    hero = Hero.last
+    challenge = Challenge.all.sample
+    hero.challenges << challenge
+    puts "#{challenge.story}"
+    app.journey_turn
   end
 
   def save
@@ -34,14 +24,16 @@ class Journey < ActiveRecord::Base
       flee(app)
     end
     save
-    app.journey_turn(self)
+    app.journey_turn
   end
 
   def fight(app)
     attack_resolver(hero, challenge)
     if challenge.current_health > 0
       attack_resolver(challenge, hero)
-      app.game_over if hero.current_health <= 0
+      if hero.current_health <= 0
+        challenge.reset
+        app.game_over 
     else
       hero_win(app)
     end
@@ -62,8 +54,27 @@ class Journey < ActiveRecord::Base
   def hero_win(app)
     puts "#{challenge.name} defeated! You gain #{challenge.experience} experience."
     hero.update(experience: hero.experience + challenge.experience)
+    reward
     challenge.reset
     journey_end(app)
+  end
+
+  def reward
+    rewards = ["some bandages", "a weapon", "a piece of armor"]
+    reward = rewards.sample
+    case reward
+    when "some bandages"
+      hero.update(current_health: hero.max_health)
+      puts "Found #{reward}. Your health is restored."
+    when "a weapon"
+      weapon_power = (hero.power * 2/10 * rand).to_i
+      hero.update(power: hero.power + weapon_power)
+      puts "Found #{reward}. Power increased by #{weapon_power}."
+    when "a piece of armor"
+      armor_power = (hero.max_health * 2/10 * rand).to_i
+      hero.update(max_health: hero.max_health + armor_power)
+      puts "Found #{reward}. Max health increased by #{armor_power}."
+    end
   end
 
   def journey_end(app)

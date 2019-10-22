@@ -71,12 +71,13 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     end
   end
 
-  def journey_turn(journey)
+  def journey_turn
     puts "What will you do now?"
     puts "Fight\n
     Flee"
     turn_choice = gets.chomp
-    journey.journey_turn_choice(self, turn_choice)
+    #binding.pry
+    Journey.last.journey_turn_choice(self, turn_choice)
   end
 
   def load_game
