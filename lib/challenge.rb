@@ -14,7 +14,6 @@ class Challenge < ActiveRecord::Base
   end
 
   def reset
-    puts "Challenge reset"
     self.update(current_health: self.max_health)
   end
 end
