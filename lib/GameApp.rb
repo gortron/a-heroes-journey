@@ -49,11 +49,13 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     #challenge.reset
     puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.current_health} health."
     
-    selection = @@prompt.select("What will you do now?", %w(Journey Back\ to\ Main\ Menu), cycle: true)
+    selection = @@prompt.select("What will you do now?", %w(Journey Shop Back\ to\ Main\ Menu), cycle: true)
 
     case selection
     when "Journey"
       enter_journey
+    when "Shop"
+      shop
     when "Back to Main Menu"
       main_menu
     end
@@ -78,6 +80,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     end
     challenge.reset
     game_over if hero.current_health == 0
+    sleep(4)
     current_game
   end
 
@@ -98,6 +101,32 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     exit
   end
 
+  def shop
+    system("clear")
+    puts "
+    ________  __   __  _______    _______  __   __  _______  _______ 
+    |       ||  | |  ||       |  |       ||  | |  ||       ||       |
+    |_     _||  |_|  ||    ___|  |  _____||  |_|  ||   _   ||    _  |
+      |   |  |       ||   |___   | |_____ |       ||  | |  ||   |_| |
+      |   |  |       ||    ___|  |_____  ||       ||  |_|  ||    ___|
+      |   |  |   _   ||   |___    _____| ||   _   ||       ||   |    
+      |___|  |__| |__||_______|  |_______||__| |__||_______||___|    
+    "
+    selection = @@prompt.select("Welcome to the shop. What would you like to buy?", %w(EXP10-Potion(Restore\ Health) Back\ to\ Menu), cycle: true)
+    case selection
+    when "EXP10-Potion(Restore Health)"
+      if hero.experience > 10
+        hero.update(current_health: hero.max_health)
+        hero.update(experience: hero.experience - 10)
+      else
+        puts "Sorry, you don't have enough experience to buy this."
+        sleep(4)
+      end
+    when "Back to Menu"
+      current_game
+    end
+    current_game
+  end
   
 
   def leader_board
