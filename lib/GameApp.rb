@@ -50,7 +50,6 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   end
 
   def enter_journey
-    # Can this hero health check happen somewhere else?
     puts "Enter Journey triggered"
     Journey.new_journey
     journey_turns
@@ -67,8 +66,8 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
         current_game
       end
     end
-    game_over if hero.current_health == 0
     challenge.reset
+    game_over if hero.current_health == 0
     current_game
   end
 
