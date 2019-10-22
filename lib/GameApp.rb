@@ -24,6 +24,9 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
       exit_game
     when "Leaderboard"
       leader_board
+    else
+      puts "Sorry, that isn't an option."
+      main_menu
     end
 
   end
@@ -52,13 +55,16 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
       enter_journey
     when "Back to Main Menu"
       main_menu
+    else
+      puts "Sorry, that isn't an option."
+      current_game
     end
   end
 
   def enter_journey
     puts "Enter Journey triggered"
     if Hero.last.current_health >= 0
-      Journey.new_encounter(self)
+      Journey.new_journey(self)
     else
       puts "Hero has perished! You must start a new game." 
       main_menu
@@ -70,12 +76,12 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     puts "Fight\n
     Flee"
     turn_choice = gets.chomp
-    journey.encounter(self, turn_choice)
+    journey.journey_turn_choice(self, turn_choice)
   end
 
   def load_game
     puts "Load Game triggered"
-    if Hero.last.current_health >= 0
+    if Hero.last.current_health > 0
       current_game
     else
       puts "Hero has perished! You must start a new game." 

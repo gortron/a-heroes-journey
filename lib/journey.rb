@@ -3,7 +3,7 @@ class Journey < ActiveRecord::Base
   belongs_to :challenges
   attr_accessor :hero_id, :challenge_id
 
-  def self.new_encounter(app)
+  def self.new_journey(app)
     journey = self.new
     journey.hero_id = Hero.last.id
     journey.challenge_id = Challenge.all.sample.id
@@ -20,32 +20,55 @@ class Journey < ActiveRecord::Base
     Challenge.find(@challenge_id)
   end
 
-  def encounter(app, turn_choice)
-    puts "Encountering #{challenge.name}"
-    if turn_choice == "Fight"
-      puts "You attack for #{hero.power} damage."
-      challenge.update(current_health: challenge.current_health - hero.power)
-      puts "#{challenge.name} now has #{challenge.current_health} health."
-      if challenge.current_health <= 0
-        puts "#{challenge.name} defeated!"
-        hero.update(experience: hero.experience + challenge.experience)
-        challenge.update(current_health: challenge.max_health)
-        end_encounter(app)
-      end
-      puts "#{challenge.name} strikes back for #{challenge.power} damage."
-      hero.update(current_health: hero.current_health - challenge.power)
-      if hero.current_health <= 0
-        app.game_over
-      end
-      puts "#{hero.name} now has #{hero.current_health} health."
-    else
-      puts "You flee!"
-      app.current_game
+  def save
+    hero.save
+    challenge.save
+    puts "Game Saved"
+  end
+
+  def journey_turn_choice(app, turn_choice)
+    case turn_choice
+    when "Fight"
+      fight(app)
+    when "Flee"
+      flee(app)
     end
+    save
     app.journey_turn(self)
   end
 
-  def end_encounter(app)
+  def fight(app)
+    attack_resolver(hero, challenge)
+    if challenge.current_health > 0
+      attack_resolver(challenge, hero)
+      app.game_over if hero.current_health <= 0
+    else
+      hero_win(app)
+    end
+  end
+
+  def attack_resolver(attacker, defender)
+    damage = (attacker.power * rand).to_i
+    puts "#{attacker.name} attacks for #{damage} damage."
+    defender.update(current_health: (defender.current_health - damage).clamp(0,100))
+    puts "#{defender.name} now has #{defender.current_health} health."
+  end
+  
+  def flee(app)
+    puts "You flee from #{challenge.name}"
     app.current_game
   end
+
+  def hero_win(app)
+    puts "#{challenge.name} defeated! You gain #{challenge.experience} experience."
+    hero.update(experience: hero.experience + challenge.experience)
+    challenge.reset
+    journey_end(app)
+  end
+
+  def journey_end(app)
+    challenge.reset
+    app.current_game
+  end
+
 end

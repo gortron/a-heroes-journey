@@ -12,4 +12,8 @@ class Challenge < ActiveRecord::Base
     Challenge.create(name: "Angry Moose", experience: 5, story: "An angry moose is attacking your camping spot, don't let the moose trash your spot!", max_health: 100, current_health: 100, power: 20)
     Challenge.create(name: "United Beavers", experience: 6, story: "A bunch of hostile beavers are trying to take advantage of your recent battles; they have seen you battleing the moose and have now attacked simulatously", max_health: 100, current_health: 100, power: 20)
   end
+
+  def reset
+    self.update(current_health: self.max_health)
+  end
 end
