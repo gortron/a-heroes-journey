@@ -1,18 +1,13 @@
 class GameApp # This class acts as our frontend. Its only job is to ineract with user input/output.
+
+  @@prompt = TTY::Prompt.new
   
   def main_menu
     # Main Menu presents the user with application options. User should be able to start new, load previous, save current, exit app, and see the leaderboard.
 
     puts "Welcome to A Hero's Journeys"
 
-    selection = TTY::Prompt.new.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Save\ Game Exit\ Game Leaderboard),cycle: true)
-    # #puts "Main Menu (type your selection in terminal):\n
-    # "New Game\n
-    # Load Game\n
-    # Save Game\n
-    # Exit Game\n
-    # Leaderboard"
-    # menu_choice = gets.chomp
+    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Save\ Game Exit\ Game Leaderboard),cycle: true)
 
     case selection
     when "New Game"
@@ -25,15 +20,11 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
       exit_game
     when "Leaderboard"
       leader_board
-    # else
-    #   puts "Sorry, that isn't an option."
-    #   main_menu
     end
 
   end
   
   def new_game
-    # This needs a refactor... this should be defined in class Hero
     puts "What do they call you, hero?"
     name = gets.chomp
     puts "Name is #{name}"
@@ -47,45 +38,43 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   def current_game
     puts "Current Game Triggered"
     puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.current_health} health."
-    selection = TTY::Prompt.new.select("What will you do now?", %w(Journey Back\ to\ Main\ Menu), cycle: true)
-    # puts "What will you do now?"
-    # puts "Journey\n
-    # Back to Main Menu"
-    # game_choice = gets.chomp
+    
+    selection = @@prompt.select("What will you do now?", %w(Journey Back\ to\ Main\ Menu), cycle: true)
+
     case selection
     when "Journey"
       enter_journey
     when "Back to Main Menu"
       main_menu
-    # else
-    #   puts "Sorry, that isn't an option."
-    #   current_game
     end
   end
 
   def enter_journey
+    # Can this hero health check happen somewhere else?
     puts "Enter Journey triggered"
-    if Hero.last.current_health >= 0
-      Journey.new_journey(self)
-    else
-      puts "Hero has perished! You must start a new game." 
-      main_menu
-    end
+    Journey.new_journey
+    journey_turns
   end
 
-  def journey_turn
-    turn_choice = TTY::Prompt.new.select("What will you do now?", %w(Fight Flee), cycle: true)
-    # puts "What will you do now?"
-    # puts "Fight\n
-    # Flee"
-    # turn_choice = gets.chomp
-    #binding.pry
-    Journey.last.journey_turn_choice(self, turn_choice)
+  def journey_turns
+    while hero.current_health > 0 && challenge.current_health > 0 
+      turn_choice = @@prompt.select("What will you do now?", %w(Fight Flee), cycle: true)
+      case turn_choice
+      when "Fight"
+        journey.fight
+      when "Flee"
+        puts "You fled!"
+        current_game
+      end
+    end
+    game_over if hero.current_health == 0
+    challenge.reset
+    current_game
   end
 
   def load_game
     puts "Load Game triggered"
-    if Hero.last.current_health > 0
+    if hero.current_health > 0
       current_game
     else
       puts "Hero has perished! You must start a new game." 
@@ -105,7 +94,7 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   end
 
   def game_over
-    puts "Game Over! #{Hero.all.last.name} has perished."
+    puts "Game Over! #{hero.name} has perished."
     main_menu
   end
 
@@ -116,6 +105,18 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
       puts "Name: #{hero.name}, Experience: #{hero.experience}"
     end
     main_menu
+  end
+
+  def journey
+    Journey.last
+  end
+
+  def hero
+    journey.hero
+  end
+
+  def challenge
+    journey.challenge
   end
 
 end

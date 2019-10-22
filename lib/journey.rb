@@ -2,12 +2,11 @@ class Journey < ActiveRecord::Base
   belongs_to :hero
   belongs_to :challenge
 
-  def self.new_journey(app)
+  def self.new_journey
     hero = Hero.last
     challenge = Challenge.all.sample
     hero.challenges << challenge
     puts "#{challenge.story}"
-    app.journey_turn
   end
 
   def save
@@ -16,28 +15,31 @@ class Journey < ActiveRecord::Base
     puts "Game Saved"
   end
 
-  def journey_turn_choice(app, turn_choice)
-    case turn_choice
-    when "Fight"
-      fight(app)
-    when "Flee"
-      flee(app)
-    end
-    save
-    app.journey_turn
-  end
+  # def journey_turn_choice(app, turn_choice)
+  #   case turn_choice
+  #   when "Fight"
+  #     fight(app)
+  #   when "Flee"
+  #     flee(app)
+  #   end
+  #   save
+  #   app.journey_turn
+  # end
 
-  def fight(app)
+  # def fight(app)
+  def fight
     attack_resolver(hero, challenge)
     if challenge.current_health > 0
       attack_resolver(challenge, hero)
-      if hero.current_health <= 0
-        challenge.reset
-        app.game_over 
-      end
+      # if hero.current_health <= 0
+      #   #challenge.reset
+      # #   #app.game_over 
+      # end
     else
-      hero_win(app)
+      # hero_win(app)
+      hero_win
     end
+    #app.journey_turn
   end
 
   def attack_resolver(attacker, defender)
@@ -47,17 +49,18 @@ class Journey < ActiveRecord::Base
     puts "#{defender.name} now has #{defender.current_health} health."
   end
   
-  def flee(app)
-    puts "You flee from #{challenge.name}"
-    app.current_game
-  end
+  # def flee(app)
+  #   puts "You flee from #{challenge.name}"
+  #   app.current_game
+  # end
 
-  def hero_win(app)
+  def hero_win
+  # def hero_win(app)
     puts "#{challenge.name} defeated! You gain #{challenge.experience} experience."
     hero.update(experience: hero.experience + challenge.experience)
     reward
-    challenge.reset
-    journey_end(app)
+    #challenge.reset
+    # journey_end(app)
   end
 
   def reward
@@ -78,9 +81,9 @@ class Journey < ActiveRecord::Base
     end
   end
 
-  def journey_end(app)
-    challenge.reset
-    app.current_game
-  end
+  # def journey_end(app)
+  #   challenge.reset
+  #   app.current_game
+  # end
 
 end
