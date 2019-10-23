@@ -16,19 +16,17 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     # Main Menu presents the user with application options. User should be able to start new, load previous, save current, exit app, and see the leaderboard.
     display
 
-    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Exit\ Game Leaderboard),cycle: true)
+    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Leaderboard Exit\ Game),cycle: true)
 
     case selection
     when "New Game"
       new_game
     when "Load Game"
       load_game
-    # when "Save Game"
-    #   save_game
-    when "Exit Game"
-      exit_game
     when "Leaderboard"
       leader_board
+    when "Exit Game"
+      exit_game
     end
   end
   
@@ -37,25 +35,25 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     puts "What do they call you, hero?"
     name = gets.chomp
     puts "Name is #{name}"
+
     hero = Hero.new({name: name})
     if Challenge.all.length == 0
       Challenge.seed_challenges
     end
+    #new_journey(hero)
     Journey.new_journey(hero)
-    puts "new_game method, Journey.new_journey called"
     journey_turns
   end
 
   def current_game
     display
-    #challenge.reset
     puts "Hero is #{hero.name} with #{hero.experience} experience and #{hero.current_health} health."
     
     selection = @@prompt.select("What will you do now?", %w(Journey Shop Back\ to\ Main\ Menu), cycle: true)
 
     case selection
     when "Journey"
-      journey_turns
+      new_journey
     when "Shop"
       shop
     when "Back to Main Menu"
@@ -63,13 +61,14 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     end
   end
 
-  # def enter_journey
-  #   Journey.new_journey(hero)
-  #   journey_turns
-  # end
+  def new_journey(hero)
+    Journey.new_journey(hero)
+    journey_turns
+  end
 
   def journey_turns
-    puts "journey_turns triggered"
+    #new_journey(hero)
+    puts "#{challenge.story}"
     while hero.current_health > 0 && challenge.current_health > 0 
       turn_choice = @@prompt.select("What will you do now?", %w(Fight Flee), cycle: true)
       case turn_choice
@@ -87,29 +86,17 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     current_game
   end
 
-  # def load_game
-  #   if hero.current_health > 0
-  #     current_game
-  #   else
-  #     game_over
-  #   end
-  # end
-
   def load_game
-    living_heroes = Hero.where("current_health > ?", 0)
+    living_heroes = Hero.where("current_health > ?", 0).order('id DESC')
     display_living_heroes = living_heroes.map { |h| "#{h.name} Experience: #{h.experience}, Current Health:#{h.current_health}!"}
     hero_selection = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
     hero_name = hero_selection.split[0]
     selected_hero = living_heroes.find_by(name: hero_name)
     # Journey.load_journey(selected_hero)
-    Journey.new_journey(selected_hero)
+    #Journey.new_journey(selected_hero)
+    new_journey(selected_hero)
     current_game
   end
-
-  # def save_game
-  #   # I think the game auto-saves?
-  #   main_menu
-  # end
 
   def exit_game
     exit
@@ -148,8 +135,14 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
   def leader_board
     # This should return the names of the five heroes with the longest runs (most experience), and their count.
     display
-    Hero.all.order('experience DESC').limit(5).each do |hero|
-      puts "Name: #{hero.name}, Experience: #{hero.experience}"
+    # Hero.all.order('experience DESC').limit(5).each do |hero|
+    #   puts "Name: #{hero.name}, Experience: #{hero.experience}"
+    # end
+
+    unsorted_hero_journey_count = Journey.group(:hero_id).count(:challenge_id)
+    top_5_hero_journey_count = Hash[unsorted_hero_journey_count.sort_by{|k,v|v}.reverse[0..4]]
+    top_5_hero_journey_count.each do |hero_id, journey_count|
+      puts "Name: #{Hero.find(hero_id).name}, Journeys: #{journey_count}"
     end
     selection = @@prompt.select("Back to Main Menu?", %w(Main\ Menu), cycle: true)
     main_menu if selection == "Main Menu"

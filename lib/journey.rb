@@ -3,10 +3,8 @@ class Journey < ActiveRecord::Base
   belongs_to :challenge
 
   def self.new_journey(hero)
-    # hero = Hero.last
     challenge = Challenge.all.sample
     hero.challenges << challenge
-    puts "#{challenge.story}"
   end
 
   def fight
