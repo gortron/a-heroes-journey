@@ -16,15 +16,15 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     # Main Menu presents the user with application options. User should be able to start new, load previous, save current, exit app, and see the leaderboard.
     display
 
-    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Save\ Game Exit\ Game Leaderboard),cycle: true)
+    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Exit\ Game Leaderboard),cycle: true)
 
     case selection
     when "New Game"
       new_game
     when "Load Game"
       load_game
-    when "Save Game"
-      save_game
+    # when "Save Game"
+    #   save_game
     when "Exit Game"
       exit_game
     when "Leaderboard"
@@ -37,23 +37,25 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     puts "What do they call you, hero?"
     name = gets.chomp
     puts "Name is #{name}"
-    Hero.new({name: name})
+    hero = Hero.new({name: name})
     if Challenge.all.length == 0
       Challenge.seed_challenges
     end
-    current_game
+    Journey.new_journey(hero)
+    puts "new_game method, Journey.new_journey called"
+    journey_turns
   end
 
   def current_game
     display
     #challenge.reset
-    puts "Hero is #{Hero.last.name} with #{Hero.last.experience} experience and #{Hero.last.current_health} health."
+    puts "Hero is #{hero.name} with #{hero.experience} experience and #{hero.current_health} health."
     
     selection = @@prompt.select("What will you do now?", %w(Journey Shop Back\ to\ Main\ Menu), cycle: true)
 
     case selection
     when "Journey"
-      enter_journey
+      journey_turns
     when "Shop"
       shop
     when "Back to Main Menu"
@@ -61,12 +63,13 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     end
   end
 
-  def enter_journey
-    Journey.new_journey
-    journey_turns
-  end
+  # def enter_journey
+  #   Journey.new_journey(hero)
+  #   journey_turns
+  # end
 
   def journey_turns
+    puts "journey_turns triggered"
     while hero.current_health > 0 && challenge.current_health > 0 
       turn_choice = @@prompt.select("What will you do now?", %w(Fight Flee), cycle: true)
       case turn_choice
@@ -84,18 +87,29 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     current_game
   end
 
+  # def load_game
+  #   if hero.current_health > 0
+  #     current_game
+  #   else
+  #     game_over
+  #   end
+  # end
+
   def load_game
-    if hero.current_health > 0
-      current_game
-    else
-      game_over
-    end
+    living_heroes = Hero.where("current_health > ?", 0)
+    display_living_heroes = living_heroes.map { |h| "#{h.name} Experience: #{h.experience}, Current Health:#{h.current_health}!"}
+    hero_selection = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
+    hero_name = hero_selection.split[0]
+    selected_hero = living_heroes.find_by(name: hero_name)
+    # Journey.load_journey(selected_hero)
+    Journey.new_journey(selected_hero)
+    current_game
   end
 
-  def save_game
-    # I think the game auto-saves?
-    main_menu
-  end
+  # def save_game
+  #   # I think the game auto-saves?
+  #   main_menu
+  # end
 
   def exit_game
     exit
@@ -112,12 +126,14 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
       |   |  |   _   ||   |___    _____| ||   _   ||       ||   |    
       |___|  |__| |__||_______|  |_______||__| |__||_______||___|    
     "
-    selection = @@prompt.select("Welcome to the shop. What would you like to buy?", %w(EXP10-Potion(Restore\ Health) Back\ to\ Menu), cycle: true)
+    
+    puts "Welcome to the Shop, #{hero.name}. Here you can buy items with Experience. You have #{hero.experience} points to spend."
+    selection = @@prompt.select("What would you like to buy?", %w(EXP10-Potion(Restore\ Health) Back\ to\ Menu), cycle: true)
     case selection
     when "EXP10-Potion(Restore Health)"
       if hero.experience > 10
-        hero.update(current_health: hero.max_health)
-        hero.update(experience: hero.experience - 10)
+        hero.update(current_health: hero.max_health) # Apply the item's effect
+        hero.update(experience: hero.experience - 10) # Remove experience cost of item
       else
         puts "Sorry, you don't have enough experience to buy this."
         sleep(4)
@@ -167,10 +183,12 @@ class GameApp # This class acts as our frontend. Its only job is to ineract with
     |   |_| ||   _   || ||_|| ||   |___   |       | |     | |   |___ |   |  | |
     |_______||__| |__||_|   |_||_______|  |_______|  |___|  |_______||___|  |_|
     " 
-    selection = @@prompt.select("#{hero.name} has perished. Play again?", %w(New\ Game Main\ Menu), cycle: true)
+    selection = @@prompt.select("#{hero.name} has perished. Play again?", %w(New\ Game Load\ Game Main\ Menu), cycle: true)
     case selection
     when "New Game"
       new_game
+    when "Load Game"
+      load_game
     when "Main Menu"
       main_menu
     end
