@@ -49,6 +49,7 @@ class GameApp
   end
 
   def go_on_a_journey(input_hero)
+    Challenge.spooky_monster_generator
     Journey.start(input_hero)
     puts "#{challenge.story}"
     while hero.current_health > 0 && challenge.current_health > 0 
