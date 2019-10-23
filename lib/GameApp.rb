@@ -51,15 +51,22 @@ class GameApp
   def go_on_a_journey(input_hero)
     Challenge.spooky_monster_generator
     Journey.start(input_hero)
-    puts "#{challenge.story}"
-    while hero.current_health > 0 && challenge.current_health > 0 
+    while hero.current_health > 0 && challenge.current_health > 0
+      
+      display_title
+      puts "#{challenge.story}"
+      puts "#{hero.name} has #{hero.current_health} health."
+      puts "#{challenge.name} has #{challenge.current_health} health."
+
       hero_choice = @@prompt.select("What will you do now?", %w(Fight Flee))
       case hero_choice
       when "Fight"
         journey.fight
+
       when "Flee"
         flee
       end
+      system("clear")
     end
     challenge.reset
     game_over if hero.current_health == 0

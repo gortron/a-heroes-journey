@@ -21,6 +21,7 @@ class Journey < ActiveRecord::Base
     puts "#{attacker.name} attacks for #{damage} damage."
     defender.update(current_health: (defender.current_health - damage).clamp(0,100))
     puts "#{defender.name} now has #{defender.current_health} health."
+    sleep(3)
   end
 
   def hero_win
