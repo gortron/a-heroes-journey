@@ -2,7 +2,7 @@ class Journey < ActiveRecord::Base
   belongs_to :hero
   belongs_to :challenge
 
-  def self.new_journey(hero)
+  def self.start(hero)
     challenge = Challenge.all.sample
     hero.challenges << challenge
   end
