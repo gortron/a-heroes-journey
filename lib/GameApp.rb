@@ -70,7 +70,7 @@ class GameApp
     end
     challenge.reset
     game_over if hero.current_health == 0
-    sleep(3) # Gives time for the user to see their reward
+    #sleep(3) # Gives time for the user to see their reward
     current_game
   end
 
@@ -96,7 +96,7 @@ class GameApp
   def shop
     display_shop
   
-    selection = @@prompt.select("What would you like to buy?", %w(EXP10-Potion(Restore\ Health) Back\ to\ Menu), cycle: true)
+    selection = @@prompt.select("What would you like to buy?", %w(EXP10-Potion(Restore\ Health) EXP5-Weapons(Increase\ Power) Back\ to\ Menu), cycle: true)
     case selection
     when "EXP10-Potion(Restore Health)"
       if hero.experience >= 10
@@ -107,6 +107,16 @@ class GameApp
         puts "Sorry, you don't have enough experience to buy this."
       end
       sleep(3) # Give the user time to read the shop's message
+      current_game
+    when "EXP5-Weapons(Increase Power)"
+      if hero.experience >= 5
+        hero.update(power: hero.power + 3) # Apply the item's effect
+        hero.update(experience: hero.experience - 5) # Remove experience cost of item
+        puts "Power increased! #{hero.name} has #{hero.power} power."
+      else
+        puts "Sorry, you don't have enough experience to buy this."
+      end
+      sleep(3)
       current_game
     when "Back to Menu"
       current_game

@@ -19,7 +19,7 @@ class Challenge < ActiveRecord::Base
     person_behavior = ["walk alone", "think you hear something", "look behind your back", "get a bad feeling in your stomach", "wonder when it was you last saw anyone", "are alone", "realize you haven't heard anything in hours","stop for breath"].sample
     spooky_question = ["Did you hear that?", "Where did your companions go?", "When did it get so quiet?", "What's there, in the shadows?", "Did something move behind you?", "That smell... sulfur?"].sample
     sense = %w(see hear smell notice).sample
-    monster = %w(Werewolf Zombie Troll Demon Witch Wretch Satyr Minotaur Ghost).sample
+    monster = %w(Werewolf Zombie Troll Demon Witch Ghoul Satyr Minotaur Ghost).sample
     monster_adj = %w(Big Furry Angry Eldritch Demonic Spooky Ghostly).sample
     monster_behavior1 = %w(screeches howls screams pants roars threatens\ you).sample
     monster_behavior2 = %w(charge rush\ at\ you attack pace approach glare).sample

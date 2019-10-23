@@ -19,9 +19,9 @@ class Journey < ActiveRecord::Base
   def attack_resolver(attacker, defender)
     damage = (attacker.power * rand).to_i
     puts "#{attacker.name} attacks for #{damage} damage."
-    defender.update(current_health: (defender.current_health - damage).clamp(0,100))
+    defender.update(current_health: (defender.current_health - damage).clamp(0,defender.max_health))
     puts "#{defender.name} now has #{defender.current_health} health."
-    sleep(3)
+    sleep(2)
   end
 
   def hero_win
@@ -56,6 +56,7 @@ class Journey < ActiveRecord::Base
       hero.update(max_health: hero.max_health + armor_power)
       puts "Found #{reward}. Max health increased by #{armor_power}."
     end
+    sleep(3)
   end
 
 end
