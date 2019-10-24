@@ -8,10 +8,8 @@ class Journey < ActiveRecord::Base
   end
 
   def fight
-    #hero_attack = attack_resolver(hero, challenge)
     hero_attack_display(attack_resolver(hero, challenge))
     if challenge.current_health > 0
-      #monster_attack = attack_resolver(challenge, hero)
       monster_attack_display(attack_resolver(challenge, hero))
     else
       hero_win
@@ -19,14 +17,8 @@ class Journey < ActiveRecord::Base
   end
 
   def attack_resolver(attacker, defender)
-    #puts journey_display
     damage = (attacker.power * rand).to_i
-    #puts "#{attacker.name} attacks for #{damage} damage."
-    #binding.pry
     defender.update(current_health: (defender.current_health - damage).clamp(0,defender.max_health))
-    #binding.pry
-    #puts "#{defender.name} now has #{defender.current_health} health."
-    #sleep(2)
     damage
   end
 
@@ -39,13 +31,13 @@ class Journey < ActiveRecord::Base
   def reward
     system("clear")
     puts "
-    _______    _______  _     _  _______  ______    ______   __   __   __  
-    |    _ |  |       || | _ | ||   _   ||    _ |  |      | |  | |  | |  | 
-    |   | ||  |    ___|| || || ||  |_|  ||   | ||  |  _    ||  | |  | |  | 
-    |   |_||_ |   |___ |       ||       ||   |_||_ | | |   ||  | |  | |  | 
-    |    __  ||    ___||       ||       ||    __  || |_|   ||__| |__| |__| 
-    |   |  | ||   |___ |   _   ||   _   ||   |  | ||       | __   __   __  
-    |___|  |_||_______||__| |__||__| |__||___|  |_||______| |__| |__| |__| 
+    ________   ________  _     _  _______  _______    ______   __   __   __  
+    |███████|  |███████||█| _ |█||███████||███████|  |██████| |██| |██| |██| 
+    |███| |█|  |███████||█||█||█||██| |██||███| |█|  |███████||██| |██| |██| 
+    |███| |█|  |███|___ |███████||███████||███| |█|  |█| |███||██| |██| |██| 
+    |████████| |███████||███████||███████||████████| |█| |███||██| |██| |██| 
+    |███|  |█| |███|___ |███████||███████||███|  |█| |██████|  __   __   __  
+    |███|  |█| |███████||██| |██||██| |██||███|  |█| |█████|  |██| |██| |██| 
     "
     rewards = ["some bandages", "a weapon", "a piece of armor"]
     reward = rewards.sample
@@ -67,6 +59,8 @@ class Journey < ActiveRecord::Base
 
   def hero_attack_display(damage)
   puts "#{hero.name}: Health: #{hero.current_health}, Power: #{hero.power}"
+  puts "\n"
+  puts attack_story_generator(hero, challenge)
   puts " _______                  "
   puts "|_    _ |            /    *WHACK*"
   puts "|\\\\__// |           /   #{hero.name} does "
@@ -77,12 +71,14 @@ class Journey < ActiveRecord::Base
   puts " ________                 "
   puts "\n"
   puts "#{challenge.name} now has #{challenge.current_health} health."
-  sleep(4)
+  sleep(6)
   puts "\n\n"
   end
 
   def monster_attack_display(damage)
     puts "#{challenge.name}: Health: #{challenge.current_health}, Power: #{challenge.power}"
+    puts "\n"
+    puts attack_story_generator(challenge, hero)
     puts "\n"
     puts "*WHACK*"
     puts "#{challenge.name} does"
@@ -94,6 +90,19 @@ class Journey < ActiveRecord::Base
     puts "    / /   /         | vvv  |        "
     puts "\n"
     puts "#{hero.name} now has #{hero.current_health} health."
-    sleep(4)
+    sleep(6)
+  end
+
+  def attack_story_generator(attacker, defender)
+    attacker = attacker.name
+    defender = defender.name
+    verb1 = %w(paces moves stalks prowls runs).sample
+    thought = ["waiting for an opportunity", "looking for an opening", "wiping blood off their face", "anger in their eyes"].sample
+    sentiment = ["Is it too late to flee?", "They are looking for a way out.", "Instinct kicks in, and time slows as you focus.", "Holy hell.", "You think their head would like nice on your wall.", "Shit."].sample
+    verb2 = %w(lunges jumps attacks yells stamps\ their\ feet taunts).sample
+    error = ["misses", "doesn't see it coming", "is too slow", "it happens too fast", "has horrible aim", "trips", "stumbles", "looks confused"].sample
+    attack = ["scrapes", "claws", "swings their fist", "throws a rock", "kicks out", "swings a weapon", "punches", "headbutts", "stabs"].sample
+
+    attack_story = "#{attacker} #{verb1} around #{defender}, #{thought}. #{sentiment} #{defender} #{verb2}, but #{error}. #{attacker} #{attack}!"
   end
 end
