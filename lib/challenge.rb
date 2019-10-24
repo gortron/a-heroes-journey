@@ -19,12 +19,12 @@ class Challenge < ActiveRecord::Base
     person_behavior = ["walk alone", "think you hear something", "look behind your back", "get a bad feeling in your stomach", "wonder when it was you last saw anyone", "are alone", "realize you haven't heard anything in hours","stop for breath"].sample
     spooky_question = ["Did you hear that?", "Where did your companions go?", "When did it get so quiet?", "What's there, in the shadows?", "Did something move behind you?", "That smell... sulfur?"].sample
     sense = %w(see hear smell notice).sample
-    monster = %w(Werewolf Zombie Troll Demon Witch Ghoul Satyr Minotaur Ghost).sample
-    monster_adj = %w(Big Furry Angry Eldritch Demonic Spooky Ghostly).sample
+    monster = %w(Werewolf Zombie Troll Demon Witch Ghoul Satyr Minotaur Ghost Skeleton).sample
+    monster_adj = %w(Giant Cursed Angry Eldritch Demonic Spooky Ghostly).sample
     monster_behavior1 = %w(screeches howls screams pants roars threatens\ you).sample
     monster_behavior2 = %w(charge rush\ at\ you attack pace approach glare).sample
     sentiment = ["Shit.", "Here we go again.", "Get ready.", "You reach for your weapon.", "WTF?"].sample
-    story = "At a #{adj} #{place}, you #{person_behavior}. #{spooky_question} You #{sense} a #{monster_adj} #{monster}. It #{monster_behavior1}, and begins to #{monster_behavior2}. #{sentiment}"
+    story = "Near a #{adj} #{place}, you #{person_behavior}. #{spooky_question} You #{sense} a #{monster_adj} #{monster}. It #{monster_behavior1}, and begins to #{monster_behavior2}. #{sentiment}"
 
     experience = rand(1..10)
     health = rand(25..150)

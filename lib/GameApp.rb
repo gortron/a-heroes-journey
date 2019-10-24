@@ -36,6 +36,7 @@ class GameApp
     display_title
 
     puts "Hero is #{hero.name} with #{hero.experience} experience and #{hero.current_health} health."
+    puts "\n\n"
     selection = @@prompt.select("What will you do now?", %w(Journey Shop Back\ to\ Main\ Menu), cycle: true)
 
     case selection
@@ -54,15 +55,14 @@ class GameApp
     while hero.current_health > 0 && challenge.current_health > 0
       
       display_title
-      puts "#{challenge.story}"
-      puts "#{hero.name} has #{hero.current_health} health."
-      puts "#{challenge.name} has #{challenge.current_health} health."
+      display_journey_text
+      
 
       hero_choice = @@prompt.select("What will you do now?", %w(Fight Flee))
       case hero_choice
       when "Fight"
+        puts "\n\n"
         journey.fight
-
       when "Flee"
         flee
       end
@@ -70,8 +70,15 @@ class GameApp
     end
     challenge.reset
     game_over if hero.current_health == 0
-    #sleep(3) # Gives time for the user to see their reward
     current_game
+  end
+
+  def display_journey_text
+    puts "#{challenge.story}"
+    puts "\n\n"
+    puts "#{hero.name} has #{hero.current_health} health."
+    puts "#{challenge.name} has #{challenge.current_health} health."
+    puts "\n\n"
   end
 
   def flee
@@ -125,14 +132,14 @@ class GameApp
   
   # This should return the names of the five heroes with the longest runs (most experience), and their count.
   def leader_board
-    display_title
+    display_leaderboard
 
     unranked_hero_journey_count = Journey.group(:hero_id).count(:challenge_id)
     leaderboard = Hash[unranked_hero_journey_count.sort_by{|k,v|v}.reverse[0..4]]
     leaderboard.each do |hero_id, journey_count|
       puts "Name: #{Hero.find(hero_id).name}, Journeys: #{journey_count}"
     end
-
+    puts "\n\n"
     selection = @@prompt.select("Back to Main Menu?", %w(Main\ Menu), cycle: true)
     main_menu if selection == "Main Menu"
   end
@@ -152,6 +159,7 @@ class GameApp
 
   def display_title
     system("clear")
+    puts "\n\n"
     puts "     __   __  _______  ______    _______  __   _______        ___  _______  __   __  ______    __    _  _______  __   __ 
     |  | |  ||       ||    _ |  |       ||  | |       |      |   ||       ||  | |  ||    _ |  |  |  | ||       ||  | |  |
     |  |_|  ||    ___||   | ||  |   _   ||__| |  _____|      |   ||   _   ||  | |  ||   | ||  |   |_| ||    ___||  |_|  |
@@ -159,10 +167,12 @@ class GameApp
     |       ||    ___||    __  ||  |_|  |     |_____  |   ___|   ||  |_|  ||       ||    __  ||  _    ||    ___||_     _|
     |   _   ||   |___ |   |  | ||       |      _____| |  |       ||       ||       ||   |  | || | |   ||   |___   |   |  
     |__| |__||_______||___|  |_||_______|     |_______|  |_______||_______||_______||___|  |_||_|  |__||_______|  |___|  "
+    puts "\n\n"
   end
 
   def display_shop
     system("clear")
+    puts "\n\n"
     puts "
     ________  __   __  _______    _______  __   __  _______  _______ 
     |       ||  | |  ||       |  |       ||  | |  ||       ||       |
@@ -172,11 +182,13 @@ class GameApp
       |   |  |   _   ||   |___    _____| ||   _   ||       ||   |    
       |___|  |__| |__||_______|  |_______||__| |__||_______||___|    
     "
+    puts "\n\n"
     puts "Welcome to the Shop, #{hero.name}. Here you can buy items with Experience. You have #{hero.experience} points to spend."
   end
 
   def display_game_over
     system("clear")
+    puts "\n\n"
     puts "
     ________  _______  __   __  _______    _______  __   __  _______  ______   
     |       ||   _   ||  |_|  ||       |  |       ||  | |  ||       ||    _  |  
@@ -186,6 +198,22 @@ class GameApp
     |   |_| ||   _   || ||_|| ||   |___   |       | |     | |   |___ |   |  | |
     |_______||__| |__||_|   |_||_______|  |_______|  |___|  |_______||___|  |_|
     " 
+    puts "\n\n"
+  end
+
+  def display_leaderboard
+    system("clear")
+    puts "\n\n"
+    puts "
+    |███|    |███████||███████||█████|   ███████||██████|  |███████||███████||███████||███████|  |██████| 
+    |███|    |███████||██|_|██||███████||███████||███| █|  |█|_|███||███████||██|_|██||███| |█|  |███████|
+    |███|    |███|___ |███████||█| |███||███|___ |███|_█|_ |███████||██| |██||███████||███|_|█|_ |█| |███|
+    |███|___ |███████||███████||█|_|███||███████||████████||██████| |██|_|██||███████||█████████||█|_|███|
+    |███████||███|___ |███████||███████||███|___ |███|  |█||█|_|███||███████||███████||███|  |█| |██████|
+    |███████||███████||██| |██||█████|   ███████||███|  |█||███████||███████||██| |██||███|  |█| |█████| 
+    "
+    puts "\n\n"
+    
   end
 
   def journey

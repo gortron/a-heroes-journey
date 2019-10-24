@@ -8,9 +8,9 @@ class Journey < ActiveRecord::Base
   end
 
   def fight
-    attack_resolver(hero, challenge)
+    hero_attack = attack_resolver(hero, challenge)
     if challenge.current_health > 0
-      attack_resolver(challenge, hero)
+      monster_attack = attack_resolver(challenge, hero)
     else
       hero_win
     end
@@ -22,6 +22,7 @@ class Journey < ActiveRecord::Base
     defender.update(current_health: (defender.current_health - damage).clamp(0,defender.max_health))
     puts "#{defender.name} now has #{defender.current_health} health."
     sleep(2)
+    damage
   end
 
   def hero_win
@@ -48,11 +49,11 @@ class Journey < ActiveRecord::Base
       hero.update(current_health: hero.max_health)
       puts "Found #{reward}. Your health is restored."
     when "a weapon"
-      weapon_power = (hero.power * 2/10 * rand).to_i
+      weapon_power = rand(1..5)
       hero.update(power: hero.power + weapon_power)
       puts "Found #{reward}. Power increased by #{weapon_power}."
     when "a piece of armor"
-      armor_power = (hero.max_health * 2/10 * rand).to_i
+      armor_power = rand(1..10)
       hero.update(max_health: hero.max_health + armor_power)
       puts "Found #{reward}. Max health increased by #{armor_power}."
     end
