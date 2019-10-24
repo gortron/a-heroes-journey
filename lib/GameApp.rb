@@ -61,14 +61,14 @@ class GameApp
   # Presents the player with options for a journey. If the player chooses to fight, it will defer to instance methods of @journey which handle fight logic.
   def go_on_a_journey
     # Initialize a journey for the hero.
-    Challenge.spooky_monster_generator
+    Monster.spooky_monster_generator
     Journey.start(@hero)
     @journey = Journey.last
-    @challenge = @journey.challenge
+    @monster = @journey.monster
     @hero = @journey.hero
 
-    # Iterate in the journey unless hero dies, challenge dies, or flee.
-    while @hero.current_health > 0 && @challenge.current_health > 0
+    # Iterate in the journey unless hero dies, monster dies, or flee.
+    while @hero.current_health > 0 && @monster.current_health > 0
       display_title
       display_journey_text
       choice = @@prompt.select("What will you do now?", %w(Fight Flee))
@@ -82,25 +82,25 @@ class GameApp
       system("clear")
     end
 
-    # Reset the challenge and return to current game menu, unless hero died.
-    @challenge.reset
+    # Reset the monster and return to current game menu, unless hero died.
+    @monster.reset
     game_over if @hero.current_health == 0
     current_game
   end
 
   # A helper method for go_on_a_journey; handles display
   def display_journey_text
-    puts "#{@challenge.story}"
+    puts "#{@monster.story}"
     puts "\n\n"
     puts "#{@hero.name} has #{@hero.current_health} health."
-    puts "#{@challenge.name} has #{@challenge.current_health} health."
+    puts "#{@monster.name} has #{@monster.current_health} health."
     puts "\n\n"
   end
 
   # A helper method for go_on_a_journey; handles flee logic
   def flee
     puts "You fled!"
-    @challenge.reset
+    @monster.reset
     current_game
   end
 
@@ -181,7 +181,7 @@ class GameApp
   def leader_board
     display_leaderboard
 
-    unranked_hero_journey_count = Journey.group(:hero_id).count(:challenge_id)
+    unranked_hero_journey_count = Journey.group(:hero_id).count(:monster_id)
     leaderboard = Hash[unranked_hero_journey_count.sort_by{|k,v|v}.reverse[0..4]]
     leaderboard.each do |hero_id, journey_count|
       puts "  Name: #{Hero.find(hero_id).name}, Journeys: #{journey_count}"

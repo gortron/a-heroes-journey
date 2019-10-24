@@ -1,6 +1,6 @@
 class Hero < ActiveRecord::Base
   has_many :journeys
-  has_many :challenges, through: :journeys
+  has_many :monsters, through: :journeys
   after_initialize :init
 
   # Sets default values for new heroes

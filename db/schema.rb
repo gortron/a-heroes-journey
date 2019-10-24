@@ -10,16 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 3) do
-
-  create_table "challenges", force: :cascade do |t|
-    t.string "name"
-    t.integer "experience"
-    t.string "story"
-    t.integer "max_health"
-    t.integer "current_health"
-    t.integer "power"
-  end
+ActiveRecord::Schema.define(version: 5) do
 
   create_table "heros", force: :cascade do |t|
     t.string "name"
@@ -32,7 +23,16 @@ ActiveRecord::Schema.define(version: 3) do
 
   create_table "journeys", force: :cascade do |t|
     t.integer "hero_id"
-    t.integer "challenge_id"
+    t.integer "monster_id"
+  end
+
+  create_table "monsters", force: :cascade do |t|
+    t.string "name"
+    t.integer "experience"
+    t.string "story"
+    t.integer "max_health"
+    t.integer "current_health"
+    t.integer "power"
   end
 
 end

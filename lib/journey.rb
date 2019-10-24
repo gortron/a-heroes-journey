@@ -1,18 +1,18 @@
 class Journey < ActiveRecord::Base
   belongs_to :hero
-  belongs_to :challenge
+  belongs_to :monster
 
-  # Starts a journey and joins a Challenge to a Hero
+  # Starts a journey and joins a Monster to a Hero
   def self.start(hero)
-    challenge = Challenge.all.sample
-    hero.challenges << challenge
+    monster = Monster.all.sample
+    hero.monsters << monster
   end
 
   # Logic that handles when a player chooses Fight
   def fight
-    hero_attack_display(attack_resolver(hero, challenge))
-    if challenge.current_health > 0
-      monster_attack_display(attack_resolver(challenge, hero))
+    hero_attack_display(attack_resolver(hero, monster))
+    if monster.current_health > 0
+      monster_attack_display(attack_resolver(monster, hero))
     else
       hero_win
     end
@@ -27,13 +27,14 @@ class Journey < ActiveRecord::Base
 
   # Handles logic for winning a journey
   def hero_win
-    puts "#{challenge.name} defeated! You gain #{challenge.experience} experience."
-    hero.update(experience: hero.experience + challenge.experience)
+    puts "#{monster.name} defeated! You gain #{monster.experience} experience."
+    hero.update(experience: hero.experience + monster.experience)
     reward
   end
 
   # Handles logic for reward after Hero wins a journey
   def reward
+    display_reward
     rewards = ["some bandages", "a weapon", "a piece of armor"]
     reward = rewards.sample
     case reward
@@ -70,27 +71,27 @@ class Journey < ActiveRecord::Base
   def hero_attack_display(damage)
   puts "#{hero.name}: Health: #{hero.current_health}, Power: #{hero.power}"
   puts "\n"
-  puts attack_story_generator(hero, challenge)
+  puts attack_story_generator(hero, monster)
   puts " _______                  "
   puts "|_    _ |            /    *WHACK*"
   puts "|\\\\__// |           /   #{hero.name} does "
   puts "| |0 0| |          /      #{damage}  damage"
-  puts "| \\_x_/ |        XX      to #{challenge.name}!"
+  puts "| \\_x_/ |        XX      to #{monster.name}!"
   puts "| /   \\ |       //        "
   puts "| ||  |||       ^        "
   puts " ________                 "
   puts "\n"
-  puts "#{challenge.name} now has #{challenge.current_health} health."
+  puts "#{monster.name} now has #{monster.current_health} health."
   sleep(6)
   puts "\n\n"
   end
 
   def monster_attack_display(damage)
     puts "\n"
-    puts attack_story_generator(challenge, hero)
+    puts attack_story_generator(monster, hero)
     puts "\n"
     puts "*WHACK*"
-    puts "#{challenge.name} does"
+    puts "#{monster.name} does"
     puts "#{damage}  damage"
     puts "to #{hero.name}!"
     puts "      /   /  /      | ___  |       "
