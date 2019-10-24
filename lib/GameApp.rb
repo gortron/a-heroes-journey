@@ -35,7 +35,7 @@ class GameApp
       go_on_a_journey
     else
       puts "Sorry, I couldn't hear you! (Name must be at least 1 character.)"
-      sleep(2)
+      sleep(3)
       new_game
     end
   end
@@ -116,6 +116,8 @@ class GameApp
     else
       puts "\n\n"
       puts "No hero journeys as of yet. Please start a New Game." 
+      sleep(3)
+      main_menu
     end
   end
 
