@@ -8,20 +8,25 @@ class Journey < ActiveRecord::Base
   end
 
   def fight
-    hero_attack = attack_resolver(hero, challenge)
+    #hero_attack = attack_resolver(hero, challenge)
+    hero_attack_display(attack_resolver(hero, challenge))
     if challenge.current_health > 0
-      monster_attack = attack_resolver(challenge, hero)
+      #monster_attack = attack_resolver(challenge, hero)
+      monster_attack_display(attack_resolver(challenge, hero))
     else
       hero_win
     end
   end
 
   def attack_resolver(attacker, defender)
+    #puts journey_display
     damage = (attacker.power * rand).to_i
-    puts "#{attacker.name} attacks for #{damage} damage."
+    #puts "#{attacker.name} attacks for #{damage} damage."
+    #binding.pry
     defender.update(current_health: (defender.current_health - damage).clamp(0,defender.max_health))
-    puts "#{defender.name} now has #{defender.current_health} health."
-    sleep(2)
+    #binding.pry
+    #puts "#{defender.name} now has #{defender.current_health} health."
+    #sleep(2)
     damage
   end
 
@@ -60,4 +65,35 @@ class Journey < ActiveRecord::Base
     sleep(3)
   end
 
+  def hero_attack_display(damage)
+  puts "#{hero.name}: Health: #{hero.current_health}, Power: #{hero.power}"
+  puts " _______                  "
+  puts "|_    _ |            /    *WHACK*"
+  puts "|\\\\__// |           /   #{hero.name} does "
+  puts "| |0 0| |          /      #{damage}  damage"
+  puts "| \\_x_/ |        XX      to #{challenge.name}!"
+  puts "| /   \\ |       //        "
+  puts "| ||  |||       ^        "
+  puts " ________                 "
+  puts "\n"
+  puts "#{challenge.name} now has #{challenge.current_health} health."
+  sleep(4)
+  puts "\n\n"
+  end
+
+  def monster_attack_display(damage)
+    puts "#{challenge.name}: Health: #{challenge.current_health}, Power: #{challenge.power}"
+    puts "\n"
+    puts "*WHACK*"
+    puts "#{challenge.name} does"
+    puts "#{damage}  damage"
+    puts "to #{hero.name}!"
+    puts "      /   /  /      | ___  |       "
+    puts "    //  //  //      | . .  |         "
+    puts "    // //  //       |  ^   |               "
+    puts "    / /   /         | vvv  |        "
+    puts "\n"
+    puts "#{hero.name} now has #{hero.current_health} health."
+    sleep(4)
+  end
 end
