@@ -146,6 +146,7 @@ class GameApp
     else
       puts "\n\n"
       puts "No hero journeys as of yet. Please start a New Game." 
+      main_menu
     end
   end
 
