@@ -28,20 +28,20 @@ class GameApp
     name = gets.chomp
     puts "Name is #{name}"
 
-    hero = Hero.new({name: name})
-    go_on_a_journey(hero)
+    @hero = Hero.create({name: name})
+    go_on_a_journey
   end
 
   def current_game
     display_title
 
-    puts "Hero is #{hero.name} with #{hero.experience} experience and #{hero.current_health} health."
+    puts "Hero is #{@hero.name} with #{@hero.experience} experience and #{@hero.current_health} health."
     puts "\n\n"
     selection = @@prompt.select("What will you do now?", %w(Journey Shop Back\ to\ Main\ Menu), cycle: true)
 
     case selection
     when "Journey"
-      go_on_a_journey(hero)
+      go_on_a_journey
     when "Shop"
       shop
     when "Back to Main Menu"
@@ -49,41 +49,48 @@ class GameApp
     end
   end
 
-  def go_on_a_journey(input_hero)
+  def go_on_a_journey
     Challenge.spooky_monster_generator
-    Journey.start(input_hero)
-    while hero.current_health > 0 && challenge.current_health > 0
+    Journey.start(@hero)
+    @journey = Journey.last
+    @challenge = @journey.challenge
+    binding.pry
+    #@hero = @journey.hero
+    binding.pry
+    while @hero.current_health > 0 && @challenge.current_health > 0
       
       display_title
       display_journey_text
+      #binding.pry
       
 
       hero_choice = @@prompt.select("What will you do now?", %w(Fight Flee))
       case hero_choice
       when "Fight"
         puts "\n\n"
-        journey.fight
+        @journey.fight
       when "Flee"
         flee
       end
       system("clear")
     end
-    challenge.reset
-    game_over if hero.current_health == 0
+    @challenge.reset
+    game_over if @hero.current_health == 0
     current_game
   end
 
   def display_journey_text
-    puts "#{challenge.story}"
+    puts "#{@challenge.story}"
     puts "\n\n"
-    puts "#{hero.name} has #{hero.current_health} health."
-    puts "#{challenge.name} has #{challenge.current_health} health."
+    binding.pry
+    puts "#{@hero.name} has #{@hero.current_health} health."
+    puts "#{@challenge.name} has #{@challenge.current_health} health."
     puts "\n\n"
   end
 
   def flee
     puts "You fled!"
-    challenge.reset
+    @challenge.reset
     current_game
   end
 
@@ -92,8 +99,8 @@ class GameApp
     display_living_heroes = living_heroes.map { |h| 
       "#{h.name} with Experience: #{h.experience} and Current Health:#{h.current_health}"}
     hero_choices = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
-    hero_chosen = living_heroes.find_by(name: hero_choices.split[0])
-    go_on_a_journey(hero_chosen)
+    @hero = living_heroes.find_by(name: hero_choices.split[0])
+    go_on_a_journey
   end
 
   def exit_game
@@ -106,20 +113,20 @@ class GameApp
     selection = @@prompt.select("What would you like to buy?", %w(EXP10-Potion(Restore\ Health) EXP5-Weapons(Increase\ Power) Back\ to\ Menu), cycle: true)
     case selection
     when "EXP10-Potion(Restore Health)"
-      if hero.experience >= 10
-        hero.update(current_health: hero.max_health) # Apply the item's effect
-        hero.update(experience: hero.experience - 10) # Remove experience cost of item
-        puts "Health restored! #{hero.name} has #{hero.max_health} health."
+      if @hero.experience >= 10
+        @hero.update(current_health: @hero.max_health) # Apply the item's effect
+        @hero.update(experience: @hero.experience - 10) # Remove experience cost of item
+        puts "Health restored! #{@hero.name} has #{@hero.max_health} health."
       else
         puts "Sorry, you don't have enough experience to buy this."
       end
       sleep(3) # Give the user time to read the shop's message
       current_game
     when "EXP5-Weapons(Increase Power)"
-      if hero.experience >= 5
-        hero.update(power: hero.power + 3) # Apply the item's effect
-        hero.update(experience: hero.experience - 5) # Remove experience cost of item
-        puts "Power increased! #{hero.name} has #{hero.power} power."
+      if @hero.experience >= 5
+        @hero.update(power: @hero.power + 3) # Apply the item's effect
+        @hero.update(experience: @hero.experience - 5) # Remove experience cost of item
+        puts "Power increased! #{@hero.name} has #{@hero.power} power."
       else
         puts "Sorry, you don't have enough experience to buy this."
       end
@@ -184,7 +191,7 @@ class GameApp
       |███|  |██| |██||███████|  |███████||██| |██||███████||███|    
     "
     puts "\n\n"
-    puts "Welcome to the Shop, #{hero.name}. Here you can buy items with Experience. You have #{hero.experience} points to spend."
+    puts "Welcome to the Shop, #{@hero.name}. Here you can buy items with Experience. You have #{@hero.experience} points to spend."
   end
 
   def display_game_over
@@ -217,15 +224,15 @@ class GameApp
     
   end
 
-  def journey
-    Journey.last
-  end
+  # def journey
+  #   Journey.last
+  # end
 
-  def hero
-    journey.hero
-  end
+  # def hero
+  #   journey.hero
+  # end
 
-  def challenge
-    journey.challenge
-  end
+  # def challenge
+  #   journey.challenge
+  # end
 end
