@@ -2,11 +2,13 @@ class Journey < ActiveRecord::Base
   belongs_to :hero
   belongs_to :challenge
 
+  # Starts a journey and joins a Challenge to a Hero
   def self.start(hero)
     challenge = Challenge.all.sample
     hero.challenges << challenge
   end
 
+  # Logic that handles when a player chooses Fight
   def fight
     hero_attack_display(attack_resolver(hero, challenge))
     if challenge.current_health > 0
@@ -16,29 +18,22 @@ class Journey < ActiveRecord::Base
     end
   end
 
+  # Helper method for fight
   def attack_resolver(attacker, defender)
     damage = (attacker.power * rand).to_i
     defender.update(current_health: (defender.current_health - damage).clamp(0,defender.max_health))
     damage
   end
 
+  # Handles logic for winning a journey
   def hero_win
     puts "#{challenge.name} defeated! You gain #{challenge.experience} experience."
     hero.update(experience: hero.experience + challenge.experience)
     reward
   end
 
+  # Handles logic for reward after Hero wins a journey
   def reward
-    system("clear")
-    puts "
-    ________   ________  _     _  _______  _______    ______   __   __   __  
-    |███████|  |███████||█| _ |█||███████||███████|  |██████| |██| |██| |██| 
-    |███| |█|  |███████||█||█||█||██| |██||███| |█|  |███████||██| |██| |██| 
-    |███| |█|  |███|___ |███████||███████||███| |█|  |█| |███||██| |██| |██| 
-    |████████| |███████||███████||███████||████████| |█| |███||██| |██| |██| 
-    |███|  |█| |███|___ |███████||███████||███|  |█| |██████|  __   __   __  
-    |███|  |█| |███████||██| |██||██| |██||███|  |█| |█████|  |██| |██| |██| 
-    "
     rewards = ["some bandages", "a weapon", "a piece of armor"]
     reward = rewards.sample
     case reward
@@ -56,6 +51,21 @@ class Journey < ActiveRecord::Base
     end
     sleep(3)
   end
+
+  def display_reward
+    system("clear")
+    puts "
+    ________   ________  _     _  _______  _______    ______   __   __   __  
+    |███████|  |███████||█| _ |█||███████||███████|  |██████| |██| |██| |██| 
+    |███| |█|  |███████||█||█||█||██| |██||███| |█|  |███████||██| |██| |██| 
+    |███| |█|  |███|___ |███████||███████||███| |█|  |█| |███||██| |██| |██| 
+    |████████| |███████||███████||███████||████████| |█| |███||██| |██| |██| 
+    |███|  |█| |███|___ |███████||███████||███|  |█| |██████|  __   __   __  
+    |███|  |█| |███████||██| |██||██| |██||███|  |█| |█████|  |██| |██| |██| 
+    "
+    puts "\n\n"
+  end
+
 
   def hero_attack_display(damage)
   puts "#{hero.name}: Health: #{hero.current_health}, Power: #{hero.power}"
@@ -76,7 +86,6 @@ class Journey < ActiveRecord::Base
   end
 
   def monster_attack_display(damage)
-    puts "#{challenge.name}: Health: #{challenge.current_health}, Power: #{challenge.power}"
     puts "\n"
     puts attack_story_generator(challenge, hero)
     puts "\n"

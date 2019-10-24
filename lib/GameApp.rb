@@ -1,9 +1,9 @@
-# This class acts as our frontend. Its only job is to ineract with user input/output.
+# This class acts as our frontend. Its job is to ineract with user input/output.
 class GameApp 
 
   @@prompt = TTY::Prompt.new
   
-  # Main Menu presents the user with application options. User should be able to start new, load previous, save current, exit app, and see the leaderboard.
+  # Presents the player with application options.
   def main_menu
     display_title
 
@@ -17,21 +17,28 @@ class GameApp
     when "Leaderboard"
       leader_board
     when "Exit Game"
-      exit_game
+      exit
     end
   end
   
+  # Allows the player to create a new Hero.
   def new_game
     display_title
 
     puts "What do they call you, hero?"
     name = gets.chomp
-    puts "Name is #{name}"
-
-    @hero = Hero.create({name: name})
-    go_on_a_journey
+    if name.length != 0
+      puts "Name is #{name}"
+      @hero = Hero.create({name: name})
+      go_on_a_journey
+    else
+      puts "Sorry, I couldn't hear you! (Name must be at least 1 character.)"
+      sleep(2)
+      new_game
+    end
   end
 
+  # Presenters the player with game options.
   def current_game
     display_title
 
@@ -49,23 +56,21 @@ class GameApp
     end
   end
 
+  # Presents the player with options for a journey. If the player chooses to fight, it will defer to instance methods of @journey which handle fight logic.
   def go_on_a_journey
+    # Initialize a journey for the hero.
     Challenge.spooky_monster_generator
     Journey.start(@hero)
     @journey = Journey.last
     @challenge = @journey.challenge
-    binding.pry
-    #@hero = @journey.hero
-    binding.pry
+    @hero = @journey.hero
+
+    # Iterate in the journey unless hero dies, challenge dies, or flee.
     while @hero.current_health > 0 && @challenge.current_health > 0
-      
       display_title
       display_journey_text
-      #binding.pry
-      
-
-      hero_choice = @@prompt.select("What will you do now?", %w(Fight Flee))
-      case hero_choice
+      choice = @@prompt.select("What will you do now?", %w(Fight Flee))
+      case choice
       when "Fight"
         puts "\n\n"
         @journey.fight
@@ -74,58 +79,58 @@ class GameApp
       end
       system("clear")
     end
+
+    # Reset the challenge and return to current game menu, unless hero died.
     @challenge.reset
     game_over if @hero.current_health == 0
     current_game
   end
 
+  # A helper method for go_on_a_journey; handles display
   def display_journey_text
     puts "#{@challenge.story}"
     puts "\n\n"
-    binding.pry
     puts "#{@hero.name} has #{@hero.current_health} health."
     puts "#{@challenge.name} has #{@challenge.current_health} health."
     puts "\n\n"
   end
 
+  # A helper method for go_on_a_journey; handles flee logic
   def flee
     puts "You fled!"
     @challenge.reset
     current_game
   end
 
+  # Allows player to load previous games (any living Hero)
   def load_game
     living_heroes = Hero.where("current_health > ?", 0).order('id DESC')
-    display_living_heroes = living_heroes.map { |h| 
-      "#{h.name} with Experience: #{h.experience} and Current Health:#{h.current_health}"}
+    display_living_heroes = living_heroes
+      .map { |h| "#{h.name} with Experience: #{h.experience} and Current Health: #{h.current_health}"}
     hero_choices = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
     @hero = living_heroes.find_by(name: hero_choices.split[0])
     go_on_a_journey
   end
 
-  def exit_game
-    exit
-  end
-
+  # Allows player to spend experience points to improve their hero's health or power.
   def shop
     display_shop
-  
     selection = @@prompt.select("What would you like to buy?", %w(EXP10-Potion(Restore\ Health) EXP5-Weapons(Increase\ Power) Back\ to\ Menu), cycle: true)
     case selection
     when "EXP10-Potion(Restore Health)"
       if @hero.experience >= 10
-        @hero.update(current_health: @hero.max_health) # Apply the item's effect
-        @hero.update(experience: @hero.experience - 10) # Remove experience cost of item
+        @hero.update(current_health: @hero.max_health)
+        @hero.update(experience: @hero.experience - 10)
         puts "Health restored! #{@hero.name} has #{@hero.max_health} health."
       else
         puts "Sorry, you don't have enough experience to buy this."
       end
-      sleep(3) # Give the user time to read the shop's message
+      sleep(3)
       current_game
     when "EXP5-Weapons(Increase Power)"
       if @hero.experience >= 5
-        @hero.update(power: @hero.power + 3) # Apply the item's effect
-        @hero.update(experience: @hero.experience - 5) # Remove experience cost of item
+        @hero.update(power: @hero.power + 3)
+        @hero.update(experience: @hero.experience - 5)
         puts "Power increased! #{@hero.name} has #{@hero.power} power."
       else
         puts "Sorry, you don't have enough experience to buy this."
@@ -137,31 +142,26 @@ class GameApp
     end
   end
   
-  # This should return the names of the five heroes with the longest runs (most experience), and their count.
+  # Opens a leaderboard of heroes with the most journeys
   def leader_board
     display_leaderboard
 
     unranked_hero_journey_count = Journey.group(:hero_id).count(:challenge_id)
     leaderboard = Hash[unranked_hero_journey_count.sort_by{|k,v|v}.reverse[0..4]]
     leaderboard.each do |hero_id, journey_count|
-      puts "Name: #{Hero.find(hero_id).name}, Journeys: #{journey_count}"
+      puts "  Name: #{Hero.find(hero_id).name}, Journeys: #{journey_count}"
     end
     puts "\n\n"
     selection = @@prompt.select("Back to Main Menu?", %w(Main\ Menu), cycle: true)
     main_menu if selection == "Main Menu"
   end
 
+  # Presents game over screen, incl. hero name and total journey count
   def game_over
     display_game_over
-    selection = @@prompt.select("#{hero.name} has perished. Play again?", %w(New\ Game Load\ Game Main\ Menu), cycle: true)
-    case selection
-    when "New Game"
-      new_game
-    when "Load Game"
-      load_game
-    when "Main Menu"
-      main_menu
-    end
+    puts "  #{@hero.name} has perished after #{Journey.where(:hero_id => @hero.id).count} journeys."
+    sleep(3)
+    main_menu
   end
 
   def display_title
@@ -223,16 +223,4 @@ class GameApp
     puts "\n\n"
     
   end
-
-  # def journey
-  #   Journey.last
-  # end
-
-  # def hero
-  #   journey.hero
-  # end
-
-  # def challenge
-  #   journey.challenge
-  # end
 end

@@ -3,7 +3,7 @@ class Hero < ActiveRecord::Base
   has_many :challenges, through: :journeys
   after_initialize :init
 
-  # Why does the intialize method below not work?
+  # Sets default values for new heroes
   def init
     self.story ||= "A battle hardened veteran."
     self.experience ||= 1
