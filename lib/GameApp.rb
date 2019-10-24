@@ -7,13 +7,15 @@ class GameApp
   def main_menu
     display_title
 
-    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Leaderboard Exit\ Game),cycle: true)
+    selection = @@prompt.select("Main Menu (type your selection in terminal):", %w(New\ Game Load\ Game Delete\ Game Leaderboard Exit\ Game),cycle: true)
 
     case selection
     when "New Game"
       new_game
     when "Load Game"
       load_game
+    when "Delete Game"
+      delete_game
     when "Leaderboard"
       leader_board
     when "Exit Game"
@@ -104,12 +106,45 @@ class GameApp
 
   # Allows player to load previous games (any living Hero)
   def load_game
-    living_heroes = Hero.where("current_health > ?", 0).order('id DESC')
-    display_living_heroes = living_heroes
-      .map { |h| "#{h.name} with Experience: #{h.experience} and Current Health: #{h.current_health}"}
-    hero_choices = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
-    @hero = living_heroes.find_by(name: hero_choices.split[0])
-    go_on_a_journey
+    if Hero.count > 0
+      living_heroes = Hero.where("current_health > ?", 0).order('id DESC')
+      display_living_heroes = living_heroes
+        .map { |h| "#{h.name} with Experience: #{h.experience} and Current Health: #{h.current_health}"}
+      load_choice = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
+      @hero = living_heroes.find_by(name: load_choice.split[0])
+      go_on_a_journey
+    else
+      puts "\n\n"
+      puts "No hero journeys as of yet. Please start a New Game." 
+    end
+  end
+
+  # Allows player to delete heroes and their associated journeys
+  def delete_game
+    if Hero.count > 0
+      display_heroes = Hero.all.map {|h| "#{h.id}. #{h.name} with Experience: #{h.experience} and Health: #{h.current_health}."}
+      delete_choice = @@prompt.select("Select the hero you want to delete.", display_heroes)
+      delete_hero = Hero.find(delete_choice.split[0])
+      system("clear")
+      display_title
+      delete_confirm = @@prompt.select("Are you sure you want to delete #{delete_hero.name}?", "Yes, delete #{delete_hero.name}", "No, go back to Main Menu.")
+      case delete_confirm
+      when "Yes, delete #{delete_hero.name}"
+        Journey.where(:hero_id => delete_hero.id)
+          .map {|journey| journey.id}
+          .map {|id| Journey.destroy(id)}
+        Hero.destroy(delete_hero.id)
+        puts "\n\n"
+        puts "#{delete_hero.name} deleted. Going back to Main Menu."
+        sleep(3)
+        main_menu
+      when "No, go back to Main Menu."
+        main_menu
+      end
+    else
+      puts "\n\n"
+      puts "No hero journeys as of yet. Please start a New Game." 
+    end
   end
 
   # Allows player to spend experience points to improve their hero's health or power.
