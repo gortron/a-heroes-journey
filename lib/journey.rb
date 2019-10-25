@@ -1,5 +1,6 @@
 class Journey < ActiveRecord::Base
   include Display
+  include Generators
   belongs_to :hero
   belongs_to :monster
 
@@ -54,16 +55,4 @@ class Journey < ActiveRecord::Base
     sleep(3)
   end
 
-  def attack_story_generator(attacker, defender)
-    attacker = attacker.name
-    defender = defender.name
-    verb1 = %w(paces moves stalks prowls runs).sample
-    thought = ["waiting for an opportunity", "looking for an opening", "wiping blood off their face", "anger in their eyes"].sample
-    sentiment = ["Is it too late to flee?", "They are looking for a way out.", "Instinct kicks in, and time slows as you focus.", "Holy hell.", "You think their head would like nice on your wall.", "Shit."].sample
-    verb2 = %w(lunges jumps attacks yells stamps\ their\ feet taunts).sample
-    error = ["misses", "doesn't see it coming", "is too slow", "it happens too fast", "has horrible aim", "trips", "stumbles", "looks confused"].sample
-    attack = ["scrapes", "claws", "swings their fist", "throws a rock", "kicks out", "swings a weapon", "punches", "headbutts", "stabs"].sample
-
-    attack_story = "#{attacker} #{verb1} around #{defender}, #{thought}. #{sentiment} #{defender} #{verb2}, but #{error}. #{attacker} #{attack}!"
-  end
 end

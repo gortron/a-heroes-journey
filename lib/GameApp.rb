@@ -1,8 +1,10 @@
 require_relative './display_module.rb'
+require_relative './content_generators_module.rb'
 
 # This class acts as our frontend. Its job is to ineract with user input/output.
 class GameApp
   include Display
+  include Generators
 
   @@prompt = TTY::Prompt.new
   
@@ -66,7 +68,7 @@ class GameApp
   # Presents the player with options for a journey. If the player chooses to fight, it will defer to instance methods of @journey which handle fight logic.
   def go_on_a_journey
     # Initialize a journey for the hero.
-    Monster.spooky_monster_generator
+    spooky_monster_generator
     Journey.start(@hero)
     @journey = Journey.last
     @monster = @journey.monster
