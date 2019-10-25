@@ -1,5 +1,6 @@
 module Display
 
+  # Display helper for GameApp
   def display_title
     system("clear")
     puts "\n\n"
@@ -14,6 +15,7 @@ module Display
     puts "\n\n"
   end
 
+  # Display helper for GameApp/shop
   def display_shop
     system("clear")
     puts "\n\n"
@@ -27,8 +29,11 @@ module Display
       |███|  |██| |██||███████|  |███████||██| |██||███████||███|    
     "
     puts "\n\n"
+    puts "Welcome to the Shop, #{@hero.name}. Here you can buy items with Experience. You have #{@hero.experience} points to spend."
+    puts "\n\n"
   end
 
+  # Display helper for GameApp/game_over
   def display_game_over
     system("clear")
     puts "\n\n"
@@ -44,6 +49,7 @@ module Display
     puts "\n\n"
   end
 
+  # Display helper for GameApp/leaderboard
   def display_leaderboard
     system("clear")
     puts "\n\n"
@@ -58,6 +64,7 @@ module Display
     puts "\n\n"
   end
 
+  # Display helper for Journey/fight
   def display_reward
     system("clear")
     puts "
@@ -70,6 +77,13 @@ module Display
     |███|  |█| |███████||██| |██||██| |██||███|  |█| |█████|  |██| |██| |██| 
     "
     puts "\n\n"
+  end
+
+  # Display helper for GameApp/delete_game & load_game
+  def display_no_heroes
+    puts "\n\n"
+    puts "No hero journeys as of yet. Please start a New Game." 
+    sleep(3)
   end
 
   # A helper method for GameApp/go_on_a_journey; handles display

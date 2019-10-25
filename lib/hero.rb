@@ -13,7 +13,5 @@ class Hero < ActiveRecord::Base
     self.power ||= 20
     self.save
   end
-
-  
   
 end

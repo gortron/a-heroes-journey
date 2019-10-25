@@ -35,11 +35,11 @@ class GameApp
     puts "What do they call you, hero?"
     name = gets.chomp
     if name.length != 0
-      puts "Name is #{name}"
+      puts "Ahhh, you are #{name}. This is your story..."
       @hero = Hero.create({name: name})
       puts "#{@hero.story}"
       sleep(5)
-      go_on_a_journey
+      current_game
     else
       puts "Sorry, I couldn't hear you! (Name must be at least 1 character.)"
       sleep(3)
@@ -102,6 +102,14 @@ class GameApp
     current_game
   end
 
+  # Presents game over screen, incl. hero name and total journey count
+  def game_over
+    display_game_over
+    puts "  #{@hero.name} has perished after #{Journey.where(:hero_id => @hero.id).count} journeys."
+    sleep(3)
+    main_menu
+  end
+
   # Allows player to load previous games (any living Hero)
   def load_game
     if Hero.count > 0
@@ -110,11 +118,9 @@ class GameApp
         .map { |h| "#{h.name} with Experience: #{h.experience} and Current Health: #{h.current_health}"}
       load_choice = @@prompt.select("Select the hero who's journey you want to continue", display_living_heroes)
       @hero = living_heroes.find_by(name: load_choice.split[0])
-      go_on_a_journey
+      current_game
     else
-      puts "\n\n"
-      puts "No hero journeys as of yet. Please start a New Game." 
-      sleep(3)
+      display_no_heroes
       main_menu
     end
   end
@@ -127,8 +133,8 @@ class GameApp
       delete_hero = Hero.find(delete_choice.split[0])
       system("clear")
       display_title
-      delete_confirm = @@prompt.select("Are you sure you want to delete #{delete_hero.name}?", "Yes, delete #{delete_hero.name}", "No, go back to Main Menu.")
-      case delete_confirm
+      delete_confirmation = @@prompt.select("Are you sure you want to delete #{delete_hero.name}?", "Yes, delete #{delete_hero.name}", "No, go back to Main Menu.")
+      case delete_confirmation
       when "Yes, delete #{delete_hero.name}"
         Journey.where(:hero_id => delete_hero.id)
           .map {|journey| journey.id}
@@ -142,9 +148,7 @@ class GameApp
         main_menu
       end
     else
-      puts "\n\n"
-      puts "No hero journeys as of yet. Please start a New Game." 
-      sleep(3)
+      display_no_heroes
       main_menu
     end
   end
@@ -152,32 +156,41 @@ class GameApp
   # Allows player to spend experience points to improve their hero's health or power.
   def shop
     display_shop
-    puts "Welcome to the Shop, #{@hero.name}. Here you can buy items with Experience. You have #{@hero.experience} points to spend."
     selection = @@prompt.select("What would you like to buy?", %w(EXP10-Potion(Restore\ Health) EXP5-Weapons(Increase\ Power) Back\ to\ Menu), cycle: true)
     case selection
     when "EXP10-Potion(Restore Health)"
-      if @hero.experience >= 10
-        @hero.update(current_health: @hero.max_health)
-        @hero.update(experience: @hero.experience - 10)
-        puts "Health restored! #{@hero.name} has #{@hero.max_health} health."
-      else
-        puts "Sorry, you don't have enough experience to buy this."
-      end
-      sleep(3)
-      current_game
+      shop_health
     when "EXP5-Weapons(Increase Power)"
-      if @hero.experience >= 5
-        @hero.update(power: @hero.power + 3)
-        @hero.update(experience: @hero.experience - 5)
-        puts "Power increased! #{@hero.name} has #{@hero.power} power."
-      else
-        puts "Sorry, you don't have enough experience to buy this."
-      end
-      sleep(3)
-      current_game
+      shop_power
     when "Back to Menu"
       current_game
     end
+  end
+
+  # Helper method for shop
+  def shop_health
+    if @hero.experience >= 10
+      @hero.update(current_health: @hero.max_health)
+      @hero.update(experience: @hero.experience - 10)
+      puts "Health restored! #{@hero.name} has #{@hero.max_health} health."
+    else
+      puts "Sorry, you don't have enough experience to buy this."
+    end
+    sleep(3)
+    current_game
+  end
+
+  # Helper method for shop
+  def shop_power
+    if @hero.experience >= 5
+      @hero.update(power: @hero.power + 3)
+      @hero.update(experience: @hero.experience - 5)
+      puts "Power increased! #{@hero.name} has #{@hero.power} power."
+    else
+      puts "Sorry, you don't have enough experience to buy this."
+    end
+    sleep(3)
+    current_game
   end
   
   # Opens a leaderboard of heroes with the most journeys
@@ -193,14 +206,4 @@ class GameApp
     selection = @@prompt.select("Back to Main Menu?", %w(Main\ Menu), cycle: true)
     main_menu if selection == "Main Menu"
   end
-
-  # Presents game over screen, incl. hero name and total journey count
-  def game_over
-    display_game_over
-    puts "  #{@hero.name} has perished after #{Journey.where(:hero_id => @hero.id).count} journeys."
-    sleep(3)
-    main_menu
-  end
-
-  
 end

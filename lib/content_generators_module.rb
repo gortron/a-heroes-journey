@@ -33,6 +33,7 @@ module Generators
     Monster.create(name: "#{monster_adj} #{monster_type}", experience: experience, story: story, max_health: health, current_health: health, power: power)
   end
 
+  # Generates a random message for journey/fight
   def attack_story_generator(attacker, defender)
     attacker = attacker.name
     defender = defender.name
