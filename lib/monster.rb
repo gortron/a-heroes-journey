@@ -13,7 +13,7 @@ class Monster < ActiveRecord::Base
     monster_adj = %w(Giant Cursed Angry Eldritch Demonic Spooky Ghostly).sample
     monster_behavior1 = %w(screeches howls screams pants roars threatens\ you).sample
     monster_behavior2 = %w(charge rush\ at\ you attack pace approach glare).sample
-    sentiment = ["Shit.", "Here we go again.", "Get ready.", "You reach for your weapon.", "WTF?"].sample
+    sentiment = ["Shit.", "This time, it's personal.", "Get ready.", "You reach for your weapon.", "WTF?"].sample
     story = "Near a #{adj} #{place}, you #{person_behavior}. #{spooky_question} You #{sense} a #{monster_adj} #{monster_type}. It #{monster_behavior1}, and begins to #{monster_behavior2}. #{sentiment}"
 
     experience = rand(1..10)

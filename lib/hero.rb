@@ -12,4 +12,9 @@ class Hero < ActiveRecord::Base
     self.power ||= 20
     self.save
   end
+
+  def hero_story_generator
+    
+  end
+  
 end
