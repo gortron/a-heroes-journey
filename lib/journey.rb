@@ -11,9 +11,9 @@ class Journey < ActiveRecord::Base
 
   # Logic that handles when a player chooses Fight
   def fight
-    hero_attack_display(attack_resolver(hero, monster))
+    display_hero_attack(attack_resolver(hero, monster))
     if monster.current_health > 0
-      monster_attack_display(attack_resolver(monster, hero))
+      display_monster_attack(attack_resolver(monster, hero))
     else
       hero_win
     end
@@ -52,42 +52,6 @@ class Journey < ActiveRecord::Base
       puts "Found #{reward}. Max health increased by #{armor_power}."
     end
     sleep(3)
-  end
-
-
-  def hero_attack_display(damage)
-  puts "#{hero.name}: Health: #{hero.current_health}, Power: #{hero.power}"
-  puts "\n"
-  puts attack_story_generator(hero, monster)
-  puts " _______                  "
-  puts "|_    _ |            /    *WHACK*"
-  puts "|\\\\__// |           /   #{hero.name} does "
-  puts "| |0 0| |          /      #{damage}  damage"
-  puts "| \\_x_/ |        XX      to #{monster.name}!"
-  puts "| /   \\ |       //        "
-  puts "| ||  |||       ^        "
-  puts " ________                 "
-  puts "\n"
-  puts "#{monster.name} now has #{monster.current_health} health."
-  sleep(6)
-  puts "\n\n"
-  end
-
-  def monster_attack_display(damage)
-    puts "\n"
-    puts attack_story_generator(monster, hero)
-    puts "\n"
-    puts "*WHACK*"
-    puts "#{monster.name} does"
-    puts "#{damage}  damage"
-    puts "to #{hero.name}!"
-    puts "      /   /  /      | ___  |       "
-    puts "    //  //  //      | . .  |         "
-    puts "    // //  //       |  ^   |               "
-    puts "    / /   /         | vvv  |        "
-    puts "\n"
-    puts "#{hero.name} now has #{hero.current_health} health."
-    sleep(6)
   end
 
   def attack_story_generator(attacker, defender)

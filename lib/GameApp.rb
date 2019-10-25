@@ -1,8 +1,7 @@
-# This class acts as our frontend. Its job is to ineract with user input/output.
-
 require_relative './display_module.rb'
+
+# This class acts as our frontend. Its job is to ineract with user input/output.
 class GameApp
-  #binding.pry
   include Display
 
   @@prompt = TTY::Prompt.new
