@@ -2,7 +2,7 @@
 
 A Hero's Journey is an interactive, procedurally-generated RPG for your CLI built with Ruby and ActiveRecord by Gordy Lanza and Bogomil Mihaylov. 
 
-![gif](https://giphy.com/gifs/SXyLsxLK01bWbxVqys)
+![gif](https://media.giphy.com/media/SXyLsxLK01bWbxVqys/giphy.gif)
 
 
 ## Motivation
