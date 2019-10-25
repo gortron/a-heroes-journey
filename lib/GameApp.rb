@@ -35,10 +35,12 @@ class GameApp
     puts "What do they call you, hero?"
     name = gets.chomp
     if name.length != 0
+      puts "\n"
       puts "Ahhh, you are #{name}. This is your story..."
+      puts "\n"
       @hero = Hero.create({name: name})
       puts "#{@hero.story}"
-      sleep(5)
+      sleep(7)
       current_game
     else
       puts "Sorry, I couldn't hear you! (Name must be at least 1 character.)"
