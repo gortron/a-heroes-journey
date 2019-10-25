@@ -1,4 +1,4 @@
-👻 # A Hero's Journey 👻
+# 👻 Hero's Journey 👻
 
 A Hero's Journey is an interactive, procedurally-generated RPG for your CLI built with Ruby and ActiveRecord by Gordy Lanza and Bogomil Mihaylov. 
 
@@ -15,9 +15,10 @@ Players are able to start a new game, load a previous game, view a leaderboard, 
 
 ## Installation
 
-1. Clone the master branch to your local.
-2. Move to the ../a-heroes-journey/ directory.
-3. Run the following commands in your terminal:
+1. Fork this repository.
+2. Clone the master branch to your local.
+3. Move to the ../a-heroes-journey/ directory.
+4. Run the following commands in your terminal:
 
 > $ bundle
 
@@ -25,6 +26,8 @@ Players are able to start a new game, load a previous game, view a leaderboard, 
 
 > $ ruby bin/run.rb
 
+5. See if you can beat 63 journeys ⚡
+
 ## License
 
-MIT © gortron / bogomilam
+MIT ©  👨‍🎨 gortron / 👷 bogomilam
