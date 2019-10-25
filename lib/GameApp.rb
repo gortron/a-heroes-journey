@@ -35,6 +35,8 @@ class GameApp
     if name.length != 0
       puts "Name is #{name}"
       @hero = Hero.create({name: name})
+      puts "#{@hero.story}"
+      sleep(5)
       go_on_a_journey
     else
       puts "Sorry, I couldn't hear you! (Name must be at least 1 character.)"
@@ -89,15 +91,6 @@ class GameApp
     @monster.reset
     game_over if @hero.current_health == 0
     current_game
-  end
-
-  # A helper method for go_on_a_journey; handles display
-  def display_journey_text
-    puts "#{@monster.story}"
-    puts "\n\n"
-    puts "#{@hero.name} has #{@hero.current_health} health."
-    puts "#{@monster.name} has #{@monster.current_health} health."
-    puts "\n\n"
   end
 
   # A helper method for go_on_a_journey; handles flee logic

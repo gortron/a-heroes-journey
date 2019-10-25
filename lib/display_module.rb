@@ -72,6 +72,16 @@ module Display
     puts "\n\n"
   end
 
+  # A helper method for GameApp/go_on_a_journey; handles display
+  def display_journey_text
+    puts "#{@monster.story}"
+    puts "\n\n"
+    puts "#{@hero.name} has #{@hero.current_health} health."
+    puts "#{@monster.name} has #{@monster.current_health} health."
+    puts "\n\n"
+  end
+
+  # A helper method for journey/fight; handles hero display
   def display_hero_attack(damage)
     puts "#{hero.name}: Health: #{hero.current_health}, Power: #{hero.power}"
     puts "\n"
@@ -92,6 +102,7 @@ module Display
     puts "\n\n"
   end
 
+  # A helper method for journey/fight; handles monster display
   def display_monster_attack(damage)
     puts "\n"
     puts attack_story_generator(monster, hero)
