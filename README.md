@@ -1,14 +1,17 @@
-# A Hero's Journey
+👻 # A Hero's Journey 👻
 
-A Hero's Journey is an interactive CLI game built with Ruby and ActiveRecord by Gordy Lanza and Bogomil Mihaylov. 
+A Hero's Journey is an interactive, procedurally-generated RPG for your CLI built with Ruby and ActiveRecord by Gordy Lanza and Bogomil Mihaylov. 
+
+![gif](https://giphy.com/gifs/SXyLsxLK01bWbxVqys)
+
 
 ## Motivation
 
-Our goal was to explore a three-class model with has-many/belongs-to associations and uses the ActiveRecord ORM to persist data between sessions. A game was a fun, interactive vehicle for us to develop.
+This is the first game either of us has built. Disclosure: building games is *very* fun. Our goal was to explore has-many/belongs-to models using the ActiveRecord ORM to persist data between sessions of our application. 
 
 ## Features
 
-Players are able to start a new game, load a previous game, view a leaderboard, and delete games. In a game, a player is able to go on a journey. Every journey is unique. Players encounter a unique monster (out of 30M possible monsters!), each with their own attributes and story. If they choose to fight rather than flee, they are presented with randomized dialogue for each turn of their journey. If the player survives the encounter with a monster, they receive a random reward. Between journeys, players can visit a shop which allows them to spend experience earned from journeys on buffs for their hero.
+Players are able to start a new game, load a previous game, view a leaderboard, and delete games. In a new game, a player is given a hero with a randomized story. Heroes are able to go on journeys. Every journey is procedurally-generated and unique. Players encounter a unique monster (out of 30M possible monsters!), each with their own attributes and story. If they choose to fight rather than flee, they are presented with randomized dialogue for each turn of their journey. If the player survives the encounter with a monster, they receive a random reward. Between journeys, players can visit a shop which allows them to spend experience earned from journeys on buffs for their hero.
 
 ## Installation
 
